@@ -32,8 +32,11 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 4. p5 calls `setup()`.
 5. `setup()` checks `localStorage` for `subsonicPlayerConfig`.
 6. If config is missing, the app stops the p5 loop and shows a setup form.
-7. On form submit, the app creates a salt, hashes `password + salt` with MD5, stores `server`, `user`, `token`, and `salt`, then reloads.
-8. With config present, `setup()` creates `SubsonicClient`, sizes the canvas to the available viewport, creates controls, visualizers, playlist, file browser, applies saved layout data, and starts loading playlists/indexes.
+7. On form submit, the app creates a salt, hashes `password + salt` with MD5, and checks the candidate credentials with a Subsonic `ping`.
+8. Only accepted credentials are stored as `server`, `user`, `token`, and `salt`; rejected credentials keep the setup form visible.
+9. With accepted config present, `setup()` waits for the async credential check before creating the player UI.
+10. `initializePlayer()` creates `SubsonicClient`, sizes the canvas to the available viewport, creates controls, visualizers, playlist, file browser, applies saved layout data, and starts loading playlists/indexes.
+11. The draw loop renders the full deck only after `appReady` is true. Before that it shows a startup/status screen, which avoids half-rendered empty panels during async startup.
 
 ## Authentication Model
 
@@ -50,6 +53,8 @@ u=<user>&t=<token>&s=<salt>&v=<api-version>&c=<client>&f=json
 ```
 
 The password is used only at setup time and is not stored by the app.
+
+`Logout` removes the stored auth fields and reloads the page. Layout and lyrics visibility remain in browser storage so the same deck arrangement can be reused after signing in again.
 
 ## API Boundary
 
@@ -124,6 +129,8 @@ The visual presentation is a dark, cyberpunk-inspired control surface. `index.ht
 
 The canvas uses the available viewport with a minimum working size of `1024 x 868`. It resizes on `windowResized()` so large screens can expose more canvas area.
 
+The lyrics column is hidden by default in both CSS and runtime state. `Show Lyrics` is opt-in, which prevents the empty lyrics panel from consuming horizontal space or pushing the deck down during the first post-login render. The app only restores saved lyrics visibility after the user has explicitly touched the switch, so older configs with an accidental `lyricsVisible: true` value do not reopen the panel.
+
 ## Layout Model
 
 The canvas layout is split between panels and movable elements:
@@ -141,7 +148,7 @@ The DOM controls are parented to `#cnv`, whose CSS uses `position: relative`. Th
 - On by default: the app behaves normally.
 - Off: the layout editor is active, and highlighted elements can be dragged.
 
-The `LAYOUT` panel contains the `Show Lyrics` and `Lock Layout` switches. It participates in the same movable panel model as the other panels, so moving the panel also moves both switches when their centers are inside it.
+The `USER CONTROL` panel contains the `Show Lyrics` and `Lock Layout` switches plus a `Logout` button. It participates in the same movable panel model as the other panels, so moving the panel also moves those controls when their centers are inside it.
 
 While unlocked, the app disables pointer events on the DOM controls so the canvas receives drag events. This means buttons and selects are movable rather than usable during layout editing.
 
@@ -150,6 +157,8 @@ Dragging a panel moves the panel and any movable element whose center is inside 
 The `SPECTRUM` and `WAVEFORM` panels also expose a resize grip in their bottom-right corner while layout editing is active. Dragging that corner resizes the panel and updates the matching visualizer dimensions so the extra canvas space can be used.
 
 When an element is released, `lib/sketch.js` logs its new position and the full layout JSON to the browser console. Re-enabling `Lock Layout` persists the layout into `subsonicPlayerConfig.layout` alongside the Subsonic connection fields. The lyrics visibility switch is stored as `subsonicPlayerConfig.lyricsVisible`.
+
+Saved layout entries are validated against the current canvas before being applied. Items whose saved bounds are outside the available canvas are skipped, allowing old or broken layouts to fall back to their default positions instead of leaving empty panels behind.
 
 Developers can also call:
 

@@ -44,6 +44,7 @@ sequenceDiagram
     participant Browser
     participant Sketch as lib/sketch.js
     participant Storage as localStorage
+    participant Server as Subsonic server
     participant User
 
     Browser->>Sketch: p5 setup()
@@ -55,13 +56,27 @@ sequenceDiagram
         Sketch->>Sketch: normalize server
         Sketch->>Sketch: create salt
         Sketch->>Sketch: MD5(password + salt)
-        Sketch->>Storage: save server, user, token, salt
-        Sketch->>Browser: reload page
+        Sketch->>Server: ping with candidate token
+        alt Credentials accepted
+            Sketch->>Storage: save server, user, token, salt
+            Sketch->>Browser: reload page
+        else Credentials rejected
+            Sketch->>User: show login error
+        end
     else Config present
-        Sketch->>Sketch: create SubsonicClient
-        Sketch->>Sketch: initialize player UI
+        Sketch->>Server: ping with stored token
+        alt Stored credentials accepted
+            Sketch->>Sketch: initialize player UI
+            Sketch->>Sketch: appReady = true
+            Sketch->>Browser: render full deck
+        else Stored credentials rejected
+            Sketch->>Storage: remove auth fields
+            Sketch->>User: show setup form
+        end
     end
 ```
+
+The canvas draw loop checks `appReady` before rendering the deck. Until initialization finishes, it shows a startup/status message instead of drawing partial panels.
 
 ## API Request Flow
 
@@ -209,14 +224,17 @@ flowchart TD
     Normal --> Playback[Playback, selects, sliders, switches work normally]
 ```
 
+When saved layout data is loaded, entries outside the current canvas are skipped and their controls keep the default coordinates.
+
 ## Layout Data
 
 ```mermaid
 flowchart LR
     PanelLayout[panelLayout array] --> DrawPanels[drawPanel]
-    PanelLayout --> LayoutTools[LAYOUT panel]
+    PanelLayout --> LayoutTools[USER CONTROL panel]
     LayoutTools --> ShowLyrics[Show Lyrics switch]
     LayoutTools --> LockLayout[Lock Layout switch]
+    LayoutTools --> Logout[Logout button]
     Movables[getMovableLayoutItems] --> Drag[Drag handlers]
     Drag --> Apply[moveTo callbacks]
     Apply --> P5Items[p5-drawn items]

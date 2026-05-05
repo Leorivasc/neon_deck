@@ -19,6 +19,7 @@ The app has no build step. The source files are loaded directly by the browser.
 - `lib/sketch.js`: p5 lifecycle, first-run setup, UI creation, playback orchestration, and audio controls.
 - `lib/subsonic.js`: Subsonic REST client and response normalization.
 - `lib/filebrowser.js`: music-library navigation.
+- `lib/player.js`: stream loading and playback state.
 - `lib/playlist.js`: local playback queue and playlist rendering.
 
 ## Local State
@@ -37,4 +38,3 @@ Stored fields:
 - `salt`
 
 The first-run form asks for a password, but only the generated token and salt are stored.
-

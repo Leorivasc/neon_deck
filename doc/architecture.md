@@ -14,12 +14,14 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | `lib/sketch.js` | Main p5 sketch, setup flow, player controls, audio graph, playback, playlists, lyrics. |
 | `lib/subsonic.js` | Subsonic REST client, token auth query generation, response normalization. |
 | `lib/filebrowser.js` | Browses Subsonic indexes and music directories. Adds selected songs to the local playlist. |
+| `lib/player.js` | Loads streams, owns the active `p5.SoundFile`, and advances playback. |
 | `lib/playlist.js` | Local in-browser playlist queue, pointer navigation, list drawing, scrollbar handling. |
 | `lib/playinginfo.js` | Current song metadata and cover art display. |
 | `lib/progressbar.js` | Song-position progress bar and seek interaction. |
 | `lib/spectrum.js` | FFT spectrum visualization. |
 | `lib/waveform.js` | FFT waveform visualization. |
-| `lib/knobMaker.js` | Reusable knob control used by volume, pan, rate, EQ, and reverb. |
+| `lib/slider_v.js` | Vertical slider control used by volume, EQ, and reverb. |
+| `lib/slider_h.js` | Horizontal slider control used by balance and playback speed. |
 
 ## Startup Flow
 
@@ -71,12 +73,13 @@ This keeps UI code from crashing when the server is unavailable, credentials fai
 
 The app keeps one global `song` reference for the currently loaded `p5.SoundFile`.
 
-Playback is driven by these functions in `lib/sketch.js`:
+Playback is centered on `Player` in `lib/player.js`:
 
-- `loadAndPlaySong(id)`: builds the stream URL, loads it with `loadSound()`, updates metadata, hooks `onended`, and starts playback.
-- `playSong()`: applies volume/filter setup and calls `song.play()`.
-- `playNext()`: advances the local `PlayList` pointer when `keepPlaying` is true.
-- `allStop()`: stops playback and clears continuous playlist playback.
+- `playSongById(id)`: validates the song against the local playlist, builds the stream URL, loads it with `loadSound()`, and starts playback.
+- `playSong()`: plays the currently loaded `p5.SoundFile`.
+- `pauseSong()` and `stopSong()`: control current playback.
+- `playNext()`: advances the local `PlayList` pointer when continuous playback is enabled.
+- `getSoundObject()`: exposes a newly loaded sound once so `lib/sketch.js` can route it through the audio graph.
 
 The local playlist is separate from the server playlist. `PlayList` stores the current queue in the browser and tracks a pointer to the current song.
 
@@ -86,9 +89,20 @@ When filters are enabled, the loaded song is disconnected from the master output
 
 - Bass band-pass -> bass gain -> master
 - Mid band-pass -> mid gain -> master
-- Treble band-pass -> treble gain -> reverb -> master
+- Treble band-pass -> treble gain -> master
+- Reverb processes the current song with its own wet/dry and gain controls.
 
-Knobs update volume, pan, rate, bass, mid, treble, reverb mix, and reverb gain during each draw loop.
+`configureAudioRouting()` rebuilds this graph only when the active song changes or the filter on/off switch changes. This avoids repeatedly stacking `p5.Reverb.process()` paths while a user moves sliders.
+
+Sliders update volume, balance, rate, bass, mid, treble, reverb mix, and reverb gain. Values are applied only when they change, and gain changes use a short ramp to reduce clicks.
+
+## Slider Interaction
+
+`SliderH` and `SliderV` support three interaction styles:
+
+- Drag the handle.
+- Click anywhere on the slider track to jump to that value.
+- Use the mouse wheel while hovering over the slider.
 
 ## UI Model
 
@@ -114,4 +128,3 @@ The current implementation favors local resilience:
 - Use a generated fallback cover when cover art is missing or fails to load.
 
 This keeps the player usable enough to recover from bad data without forcing a full app restart.
-

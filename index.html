@@ -26,12 +26,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!--<link rel="stylesheet" type="text/css" href="style.css">-->
-  <style> body {padding: 0; margin:0; background-color: #b4b4b4;} 
-          .row {width: 100%;margin: 0 auto;}
-          .block1 {width: 1024px;float: left;}
-          .block2 {width: 500px;float: left;}
-          .font {font-family: Arial, Helvetica, sans-serif;}
+  <style>
+          :root {
+            --bg: #070a12;
+            --panel: rgba(13, 18, 31, 0.92);
+            --panel-soft: rgba(18, 26, 43, 0.88);
+            --line: rgba(0, 229, 255, 0.36);
+            --cyan: #00e5ff;
+            --pink: #ff2bd6;
+            --amber: #f6c85f;
+            --text: #edf7ff;
+          }
 
+          * { box-sizing: border-box; }
+
+          body {
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+              linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px),
+              radial-gradient(circle at 22% 18%, rgba(0, 229, 255, 0.16), transparent 28%),
+              radial-gradient(circle at 82% 62%, rgba(255, 43, 214, 0.11), transparent 30%),
+              var(--bg);
+            background-size: 32px 32px, 32px 32px, auto, auto, auto;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+          }
+
+          .row {
+            display: flex;
+            gap: 24px;
+            width: 100vw;
+            margin: 0 auto;
+            padding: 22px;
+            align-items: flex-start;
+          }
+
+          .block1 {
+            width: auto;
+            flex: 0 0 auto;
+            position: relative;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(13,18,31,0.92), rgba(7,10,18,0.96));
+            box-shadow: 0 22px 70px rgba(0,0,0,0.52), 0 0 34px rgba(0,229,255,0.12);
+          }
+
+          .block1 canvas {
+            display: block;
+          }
+
+          .block2 {
+            width: 500px;
+            flex: 0 0 500px;
+            min-height: 868px;
+            padding: 28px;
+            border: 1px solid rgba(255, 43, 214, 0.24);
+            background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+            box-shadow: 0 22px 70px rgba(0,0,0,0.42), inset 0 1px rgba(255,255,255,0.05);
+          }
+
+          #title {
+            min-height: 34px;
+            color: var(--cyan);
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0,229,255,0.22);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+          }
+
+          #lyrics {
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.55;
+            max-height: 660px;
+            overflow: auto;
+            scrollbar-color: var(--cyan) rgba(255,255,255,0.08);
+          }
+
+          #lyrics pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+          }
+
+          .font { font-family: inherit; }
+
+          select {
+            color: var(--text);
+            background: #101827;
+            border: 1px solid rgba(0,229,255,0.48);
+            border-radius: 4px;
+            outline: none;
+            padding: 2px 8px;
+            box-shadow: 0 0 16px rgba(0,229,255,0.08);
+          }
+
+          @media (max-width: 1240px) {
+            .row {
+              flex-direction: column;
+              padding: 12px;
+            }
+            .block1 {
+              max-width: 100%;
+              overflow: auto;
+            }
+            .block2 {
+              width: 100%;
+              min-height: auto;
+            }
+          }
   </style>
   </head>
   <body>

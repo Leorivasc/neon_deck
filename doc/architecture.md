@@ -22,6 +22,7 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | `lib/waveform.js` | FFT waveform visualization. |
 | `lib/slider_v.js` | Vertical slider control used by volume, EQ, and reverb. |
 | `lib/slider_h.js` | Horizontal slider control used by balance and playback speed. |
+| `lib/switch.js` | Toggle controls for filters, playlist looping, and layout locking. |
 
 ## Startup Flow
 
@@ -32,7 +33,7 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 5. `setup()` checks `localStorage` for `subsonicPlayerConfig`.
 6. If config is missing, the app stops the p5 loop and shows a setup form.
 7. On form submit, the app creates a salt, hashes `password + salt` with MD5, stores `server`, `user`, `token`, and `salt`, then reloads.
-8. With config present, `setup()` creates `SubsonicClient`, the canvas, controls, visualizers, playlist, file browser, and starts loading playlists/indexes.
+8. With config present, `setup()` creates `SubsonicClient`, sizes the canvas to the available viewport, creates controls, visualizers, playlist, file browser, applies saved layout data, and starts loading playlists/indexes.
 
 ## Authentication Model
 
@@ -116,6 +117,46 @@ Lyrics are displayed in regular DOM nodes outside the canvas:
 
 - `#title`
 - `#lyrics`
+
+The visual presentation is a dark, cyberpunk-inspired control surface. `index.html` provides the page shell, page background, canvas container, and lyrics column styles. `lib/sketch.js` draws the canvas shell, panels, labels, controls, and layout-edit overlay.
+
+The canvas uses the available viewport with a minimum working size of `1024 x 868`. It resizes on `windowResized()` so large screens can expose more canvas area.
+
+## Layout Model
+
+The canvas layout is split between panels and movable elements:
+
+- `panelLayout`: developer-facing array of panel rectangles with `key`, `x`, `y`, `w`, `h`, `label`, and accent color.
+- p5-drawn controls: sliders, switches, visualizers, file browser, queue, progress bar, and `PlayingInfo`.
+- p5-created DOM controls: play/pause/stop buttons, playlist select, and song select.
+
+The DOM controls are parented to `#cnv`, whose CSS uses `position: relative`. This makes their p5 `position(x, y)` coordinates align with canvas coordinates instead of page-level coordinates.
+
+### Lock Layout Switch
+
+`Lock Layout` is a runtime developer tool:
+
+- On by default: the app behaves normally.
+- Off: the layout editor is active, and highlighted elements can be dragged.
+
+While unlocked, the app disables pointer events on the DOM controls so the canvas receives drag events. This means buttons and selects are movable rather than usable during layout editing.
+
+Dragging a panel moves the panel and any movable element whose center is inside that panel. Individual controls can still be dragged independently when the pointer starts on that control.
+
+When an element is released, `lib/sketch.js` logs its new position and the full layout JSON to the browser console. Re-enabling `Lock Layout` persists the layout into `subsonicPlayerConfig.layout` alongside the Subsonic connection fields. The lyrics visibility switch is stored as `subsonicPlayerConfig.lyricsVisible`.
+
+Developers can also call:
+
+```js
+logFullLayout()
+getFullLayout()
+logPanelLayout()
+getPanelLayout()
+setPanelLayoutEditMode(true)
+setPanelLayoutEditMode(false)
+```
+
+`getFullLayout()` reports both panels and movable controls. `getPanelLayout()` reports only the panel rectangles. A normal user does not need these APIs; they exist to tune the UI and either persist the result in browser storage or hard-code preferred coordinates back into `setup()` and `panelLayout`.
 
 ## Error Handling Philosophy
 

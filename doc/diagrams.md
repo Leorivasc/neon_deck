@@ -19,6 +19,8 @@ flowchart LR
     Sketch --> Spectrum[Spectrum]
     Sketch --> Waveform[WaveForm]
     Sketch --> Sliders[Slider controls]
+    Sketch --> Switches[Switch controls]
+    Sketch --> Layout[Layout editor]
     Sketch --> Player[Player]
 
     Client --> Server[Subsonic REST API]
@@ -31,6 +33,8 @@ flowchart LR
     Info --> Client
     Spectrum --> Sound
     Waveform --> Sound
+    Layout --> Panels[panelLayout]
+    Layout --> Movables[Movable UI elements]
 ```
 
 ## First-Run Configuration
@@ -149,6 +153,53 @@ flowchart TD
     Release --> Stop[Set isDragging false]
 
     Wheel[Mouse wheel while hovering] --> WheelUpdate[Increment value by wheel step]
+```
+
+## Layout Editing
+
+`Lock Layout` is intended for developers tuning the canvas presentation. Normal users should keep it enabled.
+
+```mermaid
+flowchart TD
+    Draw[draw loop] --> LockState{Lock Layout enabled?}
+    LockState -->|Yes| Normal[Normal controls are interactive]
+    LockState -->|No| Edit[Layout edit mode]
+
+    Edit --> Overlay[Draw highlighted movable bounds]
+    Edit --> DomPass[Disable pointer events on DOM controls]
+    Edit --> Press{Pointer pressed on movable item?}
+    Press -->|No| Ignore[Ignore layout drag]
+    Press -->|Yes| Capture[Store item and pointer offset]
+    Capture --> Group{Is item a panel?}
+    Group -->|Yes| Children[Capture movable children inside panel]
+    Group -->|No| Drag[Move item with constrained x/y]
+    Children --> DragGroup[Move panel and captured children by same delta]
+    DragGroup --> Release
+    Drag --> Release
+    Release --> Log[console.log moved item and Full layout JSON]
+    Edit --> Relock{Lock Layout enabled again?}
+    Relock -->|Yes| Save[Save layout to subsonicPlayerConfig.layout]
+    Relock -->|No| Edit
+
+    Normal --> DomNormal[DOM controls receive pointer events]
+    Normal --> Playback[Playback, selects, sliders, switches work normally]
+```
+
+## Layout Data
+
+```mermaid
+flowchart LR
+    PanelLayout[panelLayout array] --> DrawPanels[drawPanel]
+    Movables[getMovableLayoutItems] --> Drag[Drag handlers]
+    Drag --> Apply[moveTo callbacks]
+    Apply --> P5Items[p5-drawn items]
+    Apply --> DomItems[p5-created DOM items]
+    Apply --> Panels[panel rectangles]
+
+    P5Items --> Full[getFullLayout]
+    DomItems --> Full
+    Panels --> Full
+    Full --> Console[Full layout JSON]
 ```
 
 ## Audio Routing

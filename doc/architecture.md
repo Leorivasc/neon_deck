@@ -143,6 +143,8 @@ While unlocked, the app disables pointer events on the DOM controls so the canva
 
 Dragging a panel moves the panel and any movable element whose center is inside that panel. Individual controls can still be dragged independently when the pointer starts on that control.
 
+The `SPECTRUM` and `WAVEFORM` panels also expose a resize grip in their bottom-right corner while layout editing is active. Dragging that corner resizes the panel and updates the matching visualizer dimensions so the extra canvas space can be used.
+
 When an element is released, `lib/sketch.js` logs its new position and the full layout JSON to the browser console. Re-enabling `Lock Layout` persists the layout into `subsonicPlayerConfig.layout` alongside the Subsonic connection fields. The lyrics visibility switch is stored as `subsonicPlayerConfig.lyricsVisible`.
 
 Developers can also call:

@@ -169,7 +169,10 @@ flowchart TD
     Edit --> DomPass[Disable pointer events on DOM controls]
     Edit --> Press{Pointer pressed on movable item?}
     Press -->|No| Ignore[Ignore layout drag]
-    Press -->|Yes| Capture[Store item and pointer offset]
+    Press --> Resize{Spectrum/waveform corner?}
+    Resize -->|Yes| ResizePanel[Resize panel and visualizer]
+    ResizePanel --> Release
+    Resize -->|No| Capture[Store item and pointer offset]
     Capture --> Group{Is item a panel?}
     Group -->|Yes| Children[Capture movable children inside panel]
     Group -->|No| Drag[Move item with constrained x/y]

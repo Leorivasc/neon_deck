@@ -28,6 +28,8 @@ The canvas uses the maximum available viewport space, with a minimum working siz
 
 For normal use, keep `Lock Layout` enabled. Developers can disable `Lock Layout` in the UI to drag panels and controls. Re-enabling `Lock Layout` saves the layout into the same browser storage object as the Subsonic connection config.
 
+The `LAYOUT` panel contains `Show Lyrics` and `Lock Layout`. The `SPECTRUM` and `WAVEFORM` panels can be resized from their lower-right corner while layout editing is unlocked.
+
 ## Local State
 
 The app stores connection data under this browser key:

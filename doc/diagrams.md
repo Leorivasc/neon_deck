@@ -137,6 +137,27 @@ sequenceDiagram
     Player->>Player: playSongByPlaylistId(next)
 ```
 
+## Queue Click-To-Play
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Sketch as lib/sketch.js
+    participant Queue as PlayList
+    participant Player
+
+    User->>Sketch: click visible queue row
+    Sketch->>Queue: getItemIndexAt(mouseX, mouseY)
+    alt Row found
+        Sketch->>Player: playSongByPlaylistId(index)
+        Player->>Queue: setPointer(index)
+        Player->>Player: playSongById(song.id)
+        Player->>Player: continue via playNext() on song end
+    else Click outside row or on scrollbar
+        Sketch->>Queue: handleMouse(mouseX, mouseY)
+    end
+```
+
 ## Slider Interaction
 
 ```mermaid
@@ -193,6 +214,9 @@ flowchart TD
 ```mermaid
 flowchart LR
     PanelLayout[panelLayout array] --> DrawPanels[drawPanel]
+    PanelLayout --> LayoutTools[LAYOUT panel]
+    LayoutTools --> ShowLyrics[Show Lyrics switch]
+    LayoutTools --> LockLayout[Lock Layout switch]
     Movables[getMovableLayoutItems] --> Drag[Drag handlers]
     Drag --> Apply[moveTo callbacks]
     Apply --> P5Items[p5-drawn items]

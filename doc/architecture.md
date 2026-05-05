@@ -84,6 +84,8 @@ Playback is centered on `Player` in `lib/player.js`:
 
 The local playlist is separate from the server playlist. `PlayList` stores the current queue in the browser and tracks a pointer to the current song.
 
+Clicking a visible row in the queue resolves the row with `PlayList.getItemIndexAt(mx, my)` and calls `Player.playSongByPlaylistId(index)`. That updates the queue pointer, starts the selected song, and leaves normal `playNext()` behavior intact so playback continues through the rest of the queue.
+
 ## Audio Graph
 
 When filters are enabled, the loaded song is disconnected from the master output and connected into three band-pass paths:
@@ -138,6 +140,8 @@ The DOM controls are parented to `#cnv`, whose CSS uses `position: relative`. Th
 
 - On by default: the app behaves normally.
 - Off: the layout editor is active, and highlighted elements can be dragged.
+
+The `LAYOUT` panel contains the `Show Lyrics` and `Lock Layout` switches. It participates in the same movable panel model as the other panels, so moving the panel also moves both switches when their centers are inside it.
 
 While unlocked, the app disables pointer events on the DOM controls so the canvas receives drag events. This means buttons and selects are movable rather than usable during layout editing.
 

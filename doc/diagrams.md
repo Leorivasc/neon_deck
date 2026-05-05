@@ -263,5 +263,5 @@ classDiagram
     Player --> SubsonicClient
     Player --> PlayList
     PlayingInfo --> SubsonicClient
-    PlayList --> "song objects"
+    PlayList --> song objects
 ```

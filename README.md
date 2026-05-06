@@ -25,13 +25,15 @@ The interface is arranged like a modular deck:
 - `FX BUS` exposes bass, mid, treble, reverb, and reverb mix.
 - `BROWSER` lets you explore the Subsonic library.
 - `QUEUE` lists upcoming tracks. Click any queued item to jump there and continue from that point.
-- `USER CONTROL` keeps the deck configurable with `Show Lyrics`, `Lock Layout`, `Full`, and `Logout`.
+- `USER CONTROL` keeps the deck configurable with theme selection, `Show Lyrics`, `Lock Layout`, `Full`, and `Logout`.
 
 Every knob has been replaced by sliders, and sliders accept both dragging and direct track clicks, so the controls behave more like compact audio-console faders than decorative widgets.
 
 Lyrics are hidden on first load so the deck gets the full initial viewport. Turn on `Show Lyrics` when you want the separate lyrics column.
 
 Use `Full` in `USER CONTROL` to toggle browser fullscreen mode; the canvas resizes after the browser enters or exits fullscreen.
+
+The player ships with two persisted themes: `CYBER`, the current dark neon console, and `STELLAR`, a light pastel variant with the same signal-language but a softer daytime palette.
 
 ## First Run
 
@@ -49,6 +51,7 @@ The password is used only to generate the Subsonic token and salt. The browser s
 - `salt`
 - layout preferences
 - lyrics visibility
+- selected theme
 
 All of that lives under the `localStorage` key:
 
@@ -104,6 +107,7 @@ Filter and reverb settings are updated only when their sliders change. That keep
 ```text
 index.html
 lib/
+  theme.js         central theme registry and active UI palette
   sketch.js        main p5 lifecycle, UI layout, orchestration
   subsonic.js      Subsonic REST client and response normalization
   player.js        stream loading, playback, queue progression
@@ -131,7 +135,7 @@ Start there for architecture notes, runtime flow, API behavior, audio routing, l
 
 The player is intentionally canvas-first. Most of the deck is drawn with p5 so panels, sliders, visualizers, and layout tools can behave as one instrument. A few native DOM controls remain where they are more practical, such as select inputs and transport buttons, but they are anchored to the canvas container and participate in layout editing.
 
-The visual language is dark, precise, and slightly cyberpunk: restrained panels, bright signal colors, scan-friendly labels, and dense controls built for repeated use rather than a landing-page hero.
+The visual language is precise and signal-driven: restrained panels, scan-friendly labels, dense controls built for repeated use, and theme palettes that can move between dark cyberpunk and light stellar modes without changing the deck's structure.
 
 ## Current Caveats
 

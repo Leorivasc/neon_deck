@@ -11,6 +11,7 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | File | Responsibility |
 | --- | --- |
 | `index.html` | HTML shell, script loading, canvas mount, lyrics column. |
+| `lib/theme.js` | Central theme registry, active `UI` palette, CSS variable application, and theme toggle helpers. |
 | `lib/sketch.js` | Main p5 sketch, setup flow, player controls, audio graph, playback, playlists, lyrics. |
 | `lib/subsonic.js` | Subsonic REST client, token auth query generation, response normalization. |
 | `lib/filebrowser.js` | Browses Subsonic indexes and music directories. Adds selected songs to the local playlist. |
@@ -55,6 +56,8 @@ u=<user>&t=<token>&s=<salt>&v=<api-version>&c=<client>&f=json
 The password is used only at setup time and is not stored by the app.
 
 `Logout` removes the stored auth fields and reloads the page. Layout and lyrics visibility remain in browser storage so the same deck arrangement can be reused after signing in again.
+
+The selected theme is also stored in `subsonicPlayerConfig.theme`. It is intentionally kept when logging out, like layout data.
 
 ## API Boundary
 
@@ -125,7 +128,7 @@ Lyrics are displayed in regular DOM nodes outside the canvas:
 - `#title`
 - `#lyrics`
 
-The visual presentation is a dark, cyberpunk-inspired control surface. `index.html` provides the page shell, page background, canvas container, and lyrics column styles. `lib/sketch.js` draws the canvas shell, panels, labels, controls, and layout-edit overlay.
+The visual presentation is driven by `lib/theme.js`. `CYBER` is the dark neon default, while `STELLAR` is a light pastel variant with similar accents. `index.html` provides CSS variables for the page shell, background, canvas container, and lyrics column styles. `lib/theme.js` applies theme values to those variables and exposes the active global `UI` palette. Canvas components read from `UI`, while `lib/sketch.js` subscribes to theme changes to restyle live DOM controls and slider accent colors.
 
 The canvas uses the available viewport with a minimum working size of `1024 x 868`. It resizes on `windowResized()` so large screens can expose more canvas area.
 
@@ -148,7 +151,7 @@ The DOM controls are parented to `#cnv`, whose CSS uses `position: relative`. Th
 - On by default: the app behaves normally.
 - Off: the layout editor is active, and highlighted elements can be dragged.
 
-The `USER CONTROL` panel contains the `Show Lyrics` and `Lock Layout` switches plus `Full` and `Logout` buttons. `Full` toggles browser fullscreen mode through the Fullscreen API and resize handling updates the canvas after fullscreen changes. It participates in the same movable panel model as the other panels, so moving the panel also moves those controls when their centers are inside it.
+The `USER CONTROL` panel contains the theme toggle, `Show Lyrics` and `Lock Layout` switches, plus `Full` and `Logout` buttons. The theme toggle switches between `CYBER` and `STELLAR` and stores the result in browser storage. `Full` toggles browser fullscreen mode through the Fullscreen API and resize handling updates the canvas after fullscreen changes. It participates in the same movable panel model as the other panels, so moving the panel also moves those controls when their centers are inside it.
 
 While unlocked, the app disables pointer events on the DOM controls so the canvas receives drag events. This means buttons and selects are movable rather than usable during layout editing.
 

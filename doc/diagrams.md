@@ -8,8 +8,11 @@ These diagrams use Mermaid syntax. Many Markdown renderers, including GitHub, ca
 flowchart LR
     HTML[index.html] --> P5[p5.js lifecycle]
     HTML --> Sound[p5.sound]
+    HTML --> Theme[lib/theme.js]
     P5 --> Sketch[lib/sketch.js]
 
+    Theme --> UI[Active UI palette]
+    UI --> Sketch
     Sketch --> Config[localStorage config]
     Sketch --> Client[SubsonicClient]
     Sketch --> Browser[FileBrowser]
@@ -232,6 +235,7 @@ When saved layout data is loaded, entries outside the current canvas are skipped
 flowchart LR
     PanelLayout[panelLayout array] --> DrawPanels[drawPanel]
     PanelLayout --> LayoutTools[USER CONTROL panel]
+    LayoutTools --> ThemeToggle[Theme toggle]
     LayoutTools --> ShowLyrics[Show Lyrics switch]
     LayoutTools --> LockLayout[Lock Layout switch]
     LayoutTools --> Fullscreen[Full button]

@@ -16,6 +16,7 @@ The app has no build step. The source files are loaded directly by the browser. 
 ## Entry Points
 
 - `index.html`: loads p5, p5.sound, and all app modules.
+- `lib/theme.js`: central theme registry, active `UI` palette, and CSS variable application.
 - `lib/sketch.js`: p5 lifecycle, first-run setup, UI creation, playback orchestration, and audio controls.
 - `lib/subsonic.js`: Subsonic REST client and response normalization.
 - `lib/filebrowser.js`: music-library navigation.
@@ -28,7 +29,7 @@ The canvas uses the maximum available viewport space, with a minimum working siz
 
 For normal use, keep `Lock Layout` enabled. Developers can disable `Lock Layout` in the UI to drag panels and controls. Re-enabling `Lock Layout` saves the layout into the same browser storage object as the Subsonic connection config.
 
-The `USER CONTROL` panel contains `Show Lyrics`, `Lock Layout`, `Full`, and `Logout`. `Full` toggles browser fullscreen mode and the canvas resizes on fullscreen changes. Lyrics are hidden by default so the player deck owns the initial viewport; enabling `Show Lyrics` reveals the separate lyrics column. The `SPECTRUM` and `WAVEFORM` panels can be resized from their lower-right corner while layout editing is unlocked.
+The `USER CONTROL` panel contains the theme toggle, `Show Lyrics`, `Lock Layout`, `Full`, and `Logout`. The theme toggle switches between `CYBER` and `STELLAR` and persists the selection in browser storage. `Full` toggles browser fullscreen mode and the canvas resizes on fullscreen changes. Lyrics are hidden by default so the player deck owns the initial viewport; enabling `Show Lyrics` reveals the separate lyrics column. The `SPECTRUM` and `WAVEFORM` panels can be resized from their lower-right corner while layout editing is unlocked.
 
 The deck draw loop is guarded by an `appReady` state. During async login validation or player initialization, the canvas shows a startup status instead of drawing incomplete panels. Saved layout entries are also checked against the current canvas before being restored, so stale off-screen positions do not produce empty panels.
 
@@ -46,6 +47,7 @@ Stored fields:
 - `user`
 - `token`
 - `salt`
+- `theme`
 
 The first-run form asks for a password, but only the generated token and salt are stored.
 The generated token is checked with a Subsonic `ping` before it is saved, so rejected passwords keep the user on the setup form.

@@ -148,7 +148,7 @@ The DOM controls are parented to `#cnv`, whose CSS uses `position: relative`. Th
 - On by default: the app behaves normally.
 - Off: the layout editor is active, and highlighted elements can be dragged.
 
-The `USER CONTROL` panel contains the `Show Lyrics` and `Lock Layout` switches plus a `Logout` button. It participates in the same movable panel model as the other panels, so moving the panel also moves those controls when their centers are inside it.
+The `USER CONTROL` panel contains the `Show Lyrics` and `Lock Layout` switches plus `Full` and `Logout` buttons. `Full` toggles browser fullscreen mode through the Fullscreen API and resize handling updates the canvas after fullscreen changes. It participates in the same movable panel model as the other panels, so moving the panel also moves those controls when their centers are inside it.
 
 While unlocked, the app disables pointer events on the DOM controls so the canvas receives drag events. This means buttons and selects are movable rather than usable during layout editing.
 

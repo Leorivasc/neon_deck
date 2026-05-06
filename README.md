@@ -25,11 +25,13 @@ The interface is arranged like a modular deck:
 - `FX BUS` exposes bass, mid, treble, reverb, and reverb mix.
 - `BROWSER` lets you explore the Subsonic library.
 - `QUEUE` lists upcoming tracks. Click any queued item to jump there and continue from that point.
-- `USER CONTROL` keeps the deck configurable with `Show Lyrics`, `Lock Layout`, and `Logout`.
+- `USER CONTROL` keeps the deck configurable with `Show Lyrics`, `Lock Layout`, `Full`, and `Logout`.
 
 Every knob has been replaced by sliders, and sliders accept both dragging and direct track clicks, so the controls behave more like compact audio-console faders than decorative widgets.
 
 Lyrics are hidden on first load so the deck gets the full initial viewport. Turn on `Show Lyrics` when you want the separate lyrics column.
+
+Use `Full` in `USER CONTROL` to toggle browser fullscreen mode; the canvas resizes after the browser enters or exits fullscreen.
 
 ## First Run
 

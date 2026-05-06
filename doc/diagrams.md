@@ -234,6 +234,7 @@ flowchart LR
     PanelLayout --> LayoutTools[USER CONTROL panel]
     LayoutTools --> ShowLyrics[Show Lyrics switch]
     LayoutTools --> LockLayout[Lock Layout switch]
+    LayoutTools --> Fullscreen[Full button]
     LayoutTools --> Logout[Logout button]
     Movables[getMovableLayoutItems] --> Drag[Drag handlers]
     Drag --> Apply[moveTo callbacks]

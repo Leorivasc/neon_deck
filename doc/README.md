@@ -28,7 +28,7 @@ The canvas uses the maximum available viewport space, with a minimum working siz
 
 For normal use, keep `Lock Layout` enabled. Developers can disable `Lock Layout` in the UI to drag panels and controls. Re-enabling `Lock Layout` saves the layout into the same browser storage object as the Subsonic connection config.
 
-The `USER CONTROL` panel contains `Show Lyrics`, `Lock Layout`, and `Logout`. Lyrics are hidden by default so the player deck owns the initial viewport; enabling `Show Lyrics` reveals the separate lyrics column. The `SPECTRUM` and `WAVEFORM` panels can be resized from their lower-right corner while layout editing is unlocked.
+The `USER CONTROL` panel contains `Show Lyrics`, `Lock Layout`, `Full`, and `Logout`. `Full` toggles browser fullscreen mode and the canvas resizes on fullscreen changes. Lyrics are hidden by default so the player deck owns the initial viewport; enabling `Show Lyrics` reveals the separate lyrics column. The `SPECTRUM` and `WAVEFORM` panels can be resized from their lower-right corner while layout editing is unlocked.
 
 The deck draw loop is guarded by an `appReady` state. During async login validation or player initialization, the canvas shows a startup status instead of drawing incomplete panels. Saved layout entries are also checked against the current canvas before being restored, so stale off-screen positions do not produce empty panels.
 

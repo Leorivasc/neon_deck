@@ -85,7 +85,7 @@ Turn `Lock Layout` off in `USER CONTROL` to rearrange panels and controls. Drag 
 
 Turn `Lock Layout` back on to save the current arrangement in browser storage. The next reload restores it automatically.
 
-On startup, the deck waits until login validation and player initialization finish before rendering the full control surface. Saved layout items that no longer fit the current canvas are ignored so the default positions can recover the interface.
+On startup, the deck waits until login validation and player initialization finish before rendering the full control surface. Saved layout coordinates are restored as-is, even when they fall outside the currently visible canvas after switching between fullscreen and windowed mode.
 
 ## Audio Path
 

@@ -227,7 +227,7 @@ flowchart TD
     Normal --> Playback[Playback, selects, sliders, switches work normally]
 ```
 
-When saved layout data is loaded, entries outside the current canvas are skipped and their controls keep the default coordinates.
+When saved layout data is loaded, persisted coordinates are applied as-is, even if part of the layout is outside the current visible canvas.
 
 ## Layout Data
 

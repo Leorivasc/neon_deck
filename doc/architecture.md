@@ -10,10 +10,10 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 
 | File | Responsibility |
 | --- | --- |
-| `index.html` | HTML shell, script loading, canvas mount, lyrics column. |
+| `index.html` | HTML shell, script loading, and canvas mount. The old lyrics DOM is commented out until that feature returns. |
 | `lib/theme.js` | Central theme registry, active `UI` palette, CSS variable application, and theme toggle helpers. |
-| `lib/sketch.js` | Main p5 sketch, setup flow, player controls, audio graph, playback, playlists, lyrics. |
-| `lib/subsonic.js` | Subsonic REST client, token auth query generation, response normalization. |
+| `lib/sketch.js` | Main p5 sketch, setup flow, player controls, audio graph, playback, playlists, and layout orchestration. |
+| `lib/subsonic.js` | Subsonic REST client, token auth query generation, response normalization. Lyrics API support is commented out for now. |
 | `lib/filebrowser.js` | Browses Subsonic indexes and music directories. Adds selected songs to the local playlist. |
 | `lib/player.js` | Loads streams, owns the active `p5.SoundFile`, and advances playback. |
 | `lib/playlist.js` | Local in-browser playlist queue, pointer navigation, list drawing, scrollbar handling. |
@@ -21,9 +21,10 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | `lib/progressbar.js` | Song-position progress bar and seek interaction. |
 | `lib/spectrum.js` | FFT spectrum visualization. |
 | `lib/waveform.js` | FFT waveform visualization. |
+| `lib/vumeters.js` | Output-aware stereo VU meter visualization. |
 | `lib/slider_v.js` | Vertical slider control used by volume, EQ, and reverb. |
 | `lib/slider_h.js` | Horizontal slider control used by balance and playback speed. |
-| `lib/switch.js` | Toggle controls for filters, playlist looping, and layout locking. |
+| `lib/switch.js` | Toggle controls for filters, playlist looping, panel movement, and element movement. |
 
 ## Startup Flow
 
@@ -55,7 +56,7 @@ u=<user>&t=<token>&s=<salt>&v=<api-version>&c=<client>&f=json
 
 The password is used only at setup time and is not stored by the app.
 
-`Logout` removes the stored auth fields and reloads the page. Layout and lyrics visibility remain in browser storage so the same deck arrangement can be reused after signing in again.
+`Logout` removes the stored auth fields and reloads the page. Layout data remains in browser storage so the same deck arrangement can be reused after signing in again.
 
 The selected theme is also stored in `subsonicPlayerConfig.theme`. It is intentionally kept when logging out, like layout data.
 
@@ -123,16 +124,11 @@ Most UI is drawn on the p5 canvas. Some p5-created HTML elements are positioned 
 - Playlist selector.
 - Song selector.
 
-Lyrics are displayed in regular DOM nodes outside the canvas:
-
-- `#title`
-- `#lyrics`
-
-The visual presentation is driven by `lib/theme.js`. `CYBER` is the dark neon default, while `STELLAR` is a light pastel variant with similar accents. `index.html` provides CSS variables for the page shell, background, canvas container, and lyrics column styles. `lib/theme.js` applies theme values to those variables and exposes the active global `UI` palette. Canvas components read from `UI`, while `lib/sketch.js` subscribes to theme changes to restyle live DOM controls and slider accent colors.
+The visual presentation is driven by `lib/theme.js`. `CYBER` is the dark neon default, while `STELLAR` is a light pastel variant with similar accents. `index.html` provides CSS variables for the page shell, background, and canvas container. `lib/theme.js` applies theme values to those variables and exposes the active global `UI` palette. Canvas components read from `UI`, while `lib/sketch.js` subscribes to theme changes to restyle live DOM controls and slider accent colors.
 
 The canvas uses the available viewport with a minimum working size of `1024 x 868`. It resizes on `windowResized()` so large screens can expose more canvas area.
 
-The lyrics column is hidden by default in both CSS and runtime state. `Show Lyrics` is opt-in, which prevents the empty lyrics panel from consuming horizontal space or pushing the deck down during the first post-login render. The app only restores saved lyrics visibility after the user has explicitly touched the switch, so older configs with an accidental `lyricsVisible: true` value do not reopen the panel.
+The lyrics feature is currently parked. The old DOM column, `Show Lyrics` switch, `loadLyrics()` workflow, and `SubsonicClient.getLyrics()` method remain in comments with TODO markers, but no active runtime path calls the external lyrics API or reserves canvas space for that column.
 
 ## Layout Model
 
@@ -144,24 +140,26 @@ The canvas layout is split between panels and movable elements:
 
 The DOM controls are parented to `#cnv`, whose CSS uses `position: relative`. This makes their p5 `position(x, y)` coordinates align with canvas coordinates instead of page-level coordinates.
 
-### Lock Layout Switch
+### Layout Editing Switches
 
-`Lock Layout` is a runtime developer tool:
+The deck has two runtime layout-editing tools:
 
-- On by default: the app behaves normally.
-- Off: the layout editor is active, and highlighted elements can be dragged.
+- `Move Panels`: enables panel dragging and panel resizing.
+- `Move Elements`: enables individual controls to move between panels.
 
-The `USER CONTROL` panel contains the theme toggle, `Show Lyrics` and `Lock Layout` switches, plus `Full` and `Logout` buttons. The theme toggle switches between `CYBER` and `STELLAR` and stores the result in browser storage. `Full` toggles browser fullscreen mode through the Fullscreen API and resize handling updates the canvas after fullscreen changes. It participates in the same movable panel model as the other panels, so moving the panel also moves those controls when their centers are inside it.
+When both switches are off, the app behaves normally and the layout is locked. Turning either switch off after editing persists layout data into `subsonicPlayerConfig.layout` and element ownership into `subsonicPlayerConfig.layoutOwners`.
 
-While unlocked, the app disables pointer events on the DOM controls so the canvas receives drag events. This means buttons and selects are movable rather than usable during layout editing.
+The `USER CONTROL` panel contains the theme toggle, `Move Panels`, `Move Elements`, `Full`, and `Logout` controls. The theme toggle switches between `CYBER` and `STELLAR` and stores the result in browser storage. `Full` toggles browser fullscreen mode through the Fullscreen API and resize handling updates the canvas after fullscreen changes. It participates in the same movable panel model as the other panels, so moving the panel also moves controls owned by it.
 
-Dragging a panel moves the panel and any movable element whose center is inside that panel. Individual controls can still be dragged independently when the pointer starts on that control.
+While either edit switch is active, the app disables pointer events on the DOM controls so the canvas receives drag events. This means buttons and selects are movable rather than usable during layout editing.
+
+Dragging a panel moves the panel and any element currently owned by that panel. Ownership is explicit, which prevents overlapping panels from accidentally stealing each other's controls. Individual controls can only be moved between panels when `Move Elements` is enabled; when released, their owner is updated from the panel under their center.
 
 Panel headers are prioritized over controls inside the panel during layout editing. This matters for compact panels such as `POSITION`, where the progress bar can overlap much of the panel body; grabbing the header still selects the panel itself.
 
-The `SPECTRUM` and `WAVEFORM` panels also expose a resize grip in their bottom-right corner while layout editing is active. Dragging that corner resizes the panel and updates the matching visualizer dimensions so the extra canvas space can be used.
+The `SPECTRUM`, `WAVEFORM`, `VU METERS`, and `POSITION` panels expose a resize grip in their bottom-right corner while `Move Panels` is active. Dragging that corner resizes the panel and calls the matching component's `fitToPanel()` method so the plot or progress bar fills the available panel space. Minimum sizes live in the corresponding component modules instead of being hard-coded in `lib/sketch.js`.
 
-When an element is released, `lib/sketch.js` logs its new position and the full layout JSON to the browser console. Re-enabling `Lock Layout` persists the layout into `subsonicPlayerConfig.layout` alongside the Subsonic connection fields. The lyrics visibility switch is stored as `subsonicPlayerConfig.lyricsVisible`.
+When an element is released, `lib/sketch.js` logs its new position and the full layout JSON to the browser console.
 
 Saved layout entries are restored with their persisted coordinates, even when those coordinates are outside the currently visible canvas. This preserves the user's exact fullscreen layout instead of crowding panels against the windowed viewport edges.
 
@@ -177,6 +175,17 @@ setPanelLayoutEditMode(false)
 ```
 
 `getFullLayout()` reports both panels and movable controls. `getPanelLayout()` reports only the panel rectangles. A normal user does not need these APIs; they exist to tune the UI and either persist the result in browser storage or hard-code preferred coordinates back into `setup()` and `panelLayout`.
+
+## Visualization Modules
+
+Audio visualizers are intentionally module-owned:
+
+- `Spectrum` owns its FFT drawing, responsive bar sizing, panel fit behavior, and minimum panel size.
+- `WaveForm` owns waveform drawing, panel fit behavior, and minimum panel size.
+- `VUMeters` owns stereo output metering, peak smoothing, panel fit behavior, and minimum panel size.
+- `ProgressBarH` owns song-position drawing, seek interaction, panel fit behavior, and minimum panel size.
+
+`lib/sketch.js` acts as the orchestrator: it creates the modules, asks them to draw, and calls `fitToPanel()` when their panel changes. Component-specific geometry rules stay in each module so the main sketch remains focused on lifecycle, input routing, and audio graph coordination.
 
 ## Error Handling Philosophy
 

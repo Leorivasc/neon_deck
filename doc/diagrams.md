@@ -21,6 +21,7 @@ flowchart LR
     Sketch --> Progress[ProgressBarH]
     Sketch --> Spectrum[Spectrum]
     Sketch --> Waveform[WaveForm]
+    Sketch --> VUMeters[VUMeters]
     Sketch --> Sliders[Slider controls]
     Sketch --> Switches[Switch controls]
     Sketch --> Layout[Layout editor]
@@ -36,6 +37,7 @@ flowchart LR
     Info --> Client
     Spectrum --> Sound
     Waveform --> Sound
+    VUMeters --> Sound
     Layout --> Panels[panelLayout]
     Layout --> Movables[Movable UI elements]
 ```
@@ -196,31 +198,33 @@ flowchart TD
 
 ## Layout Editing
 
-`Lock Layout` is intended for developers tuning the canvas presentation. Normal users should keep it enabled.
+`Move Panels` and `Move Elements` are intended for tuning the canvas presentation. Normal users should keep both disabled.
 
 ```mermaid
 flowchart TD
-    Draw[draw loop] --> LockState{Lock Layout enabled?}
-    LockState -->|Yes| Normal[Normal controls are interactive]
-    LockState -->|No| Edit[Layout edit mode]
+    Draw[draw loop] --> EditState{Move Panels or Move Elements enabled?}
+    EditState -->|No| Normal[Normal controls are interactive]
+    EditState -->|Yes| Edit[Layout edit mode]
 
     Edit --> Overlay[Draw highlighted movable bounds]
     Edit --> DomPass[Disable pointer events on DOM controls]
-    Edit --> Press{Pointer pressed on movable item?}
+    Edit --> Press{Pointer pressed on movable target?}
     Press -->|No| Ignore[Ignore layout drag]
-    Press --> Resize{Spectrum/waveform corner?}
-    Resize -->|Yes| ResizePanel[Resize panel and visualizer]
+    Press --> Resize{Resizable panel corner and Move Panels on?}
+    Resize -->|Yes| ResizePanel[Resize panel and call fitToPanel]
     ResizePanel --> Release
-    Resize -->|No| Capture[Store item and pointer offset]
-    Capture --> Group{Is item a panel?}
-    Group -->|Yes| Children[Capture movable children inside panel]
-    Group -->|No| Drag[Move item with constrained x/y]
-    Children --> DragGroup[Move panel and captured children by same delta]
+    Resize -->|No| Target{Panel or element?}
+    Target -->|Panel with Move Panels on| Children[Capture elements owned by panel]
+    Target -->|Element with Move Elements on| Capture[Store item and pointer offset]
+    Target -->|Unavailable mode| Ignore
+    Capture --> Drag[Move item with constrained x/y]
+    Children --> DragGroup[Move panel and owned children by same delta]
     DragGroup --> Release
     Drag --> Release
-    Release --> Log[console.log moved item and Full layout JSON]
-    Edit --> Relock{Lock Layout enabled again?}
-    Relock -->|Yes| Save[Save layout to subsonicPlayerConfig.layout]
+    Release --> Owner[Update owner when an element is dropped into a panel]
+    Owner --> Log[console.log moved item and Full layout JSON]
+    Edit --> Relock{Both edit switches disabled?}
+    Relock -->|Yes| Save[Save layout and layoutOwners]
     Relock -->|No| Edit
 
     Normal --> DomNormal[DOM controls receive pointer events]
@@ -236,8 +240,8 @@ flowchart LR
     PanelLayout[panelLayout array] --> DrawPanels[drawPanel]
     PanelLayout --> LayoutTools[USER CONTROL panel]
     LayoutTools --> ThemeToggle[Theme toggle]
-    LayoutTools --> ShowLyrics[Show Lyrics switch]
-    LayoutTools --> LockLayout[Lock Layout switch]
+    LayoutTools --> MovePanels[Move Panels switch]
+    LayoutTools --> MoveElements[Move Elements switch]
     LayoutTools --> Fullscreen[Full button]
     LayoutTools --> Logout[Logout button]
     Movables[getMovableLayoutItems] --> Drag[Drag handlers]
@@ -250,6 +254,8 @@ flowchart LR
     DomItems --> Full
     Panels --> Full
     Full --> Console[Full layout JSON]
+    Drag --> Owners[layoutItemPanelOwners]
+    Owners --> Storage[subsonicPlayerConfig.layoutOwners]
 ```
 
 ## Audio Routing
@@ -292,6 +298,8 @@ flowchart TD
     Rate[Speed slider] -. changed values .-> Song
     ReverbMix[Reverb mix slider] -. changed values .-> Reverb
     ReverbVol[Reverb volume slider] -. changed values .-> Reverb
+    Master --> VUMeters[VUMeters output analyzer]
+    DirectMaster --> VUMeters
 ```
 
 ## Local Data Relationships
@@ -310,7 +318,6 @@ classDiagram
         getPlaylist(id)
         getSong(id)
         getSongInfo(id)
-        getLyrics(artist, title)
         getCoverArt(id)
     }
 
@@ -358,6 +365,24 @@ classDiagram
         draw()
     }
 
+    class Spectrum {
+        draw(song)
+        fitToPanel(panel)
+        getMinPanelSize()
+    }
+
+    class WaveForm {
+        draw(song)
+        fitToPanel(panel)
+        getMinPanelSize()
+    }
+
+    class VUMeters {
+        draw(song)
+        fitToPanel(panel)
+        getMinPanelSize()
+    }
+
     FileBrowser --> SubsonicClient
     FileBrowser --> PlayList
     FileBrowser --> Player
@@ -365,4 +390,7 @@ classDiagram
     Player --> PlayList
     PlayingInfo --> SubsonicClient
     PlayList --> song objects
+    Spectrum --> P5Sound
+    WaveForm --> P5Sound
+    VUMeters --> P5Sound
 ```

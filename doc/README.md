@@ -1,4 +1,4 @@
-# Subsonic Player Documentation
+# Subsonic Neon Deck Documentation
 
 This directory documents the browser player architecture, runtime flow, and the main moving parts in the codebase.
 
@@ -9,7 +9,7 @@ This directory documents the browser player architecture, runtime flow, and the 
 
 ## Project Summary
 
-This app is a client-side Subsonic music player built with p5.js and p5.sound. It runs from `index.html`, loads local JavaScript modules from `lib/`, asks for Subsonic connection details on first run, stores token authentication data in `localStorage`, then uses the Subsonic REST API to browse music, play streams, show cover art, apply effects, and visualize audio.
+Subsonic Neon Deck is a client-side Subsonic music player built with p5.js and p5.sound. It runs from `index.html`, loads local JavaScript modules from `lib/`, asks for Subsonic connection details on first run, stores token authentication data in `localStorage`, then uses the Subsonic REST API to browse music, play streams, show cover art, apply effects, and visualize audio.
 
 The app has no build step. The source files are loaded directly by the browser. The current presentation uses a themeable canvas deck with `CYBER` and `STELLAR` themes. The former lyrics column is parked in comments until the external lyrics workflow is available again.
 

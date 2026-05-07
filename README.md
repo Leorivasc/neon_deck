@@ -8,7 +8,7 @@ It is not a streaming service. It is your server, your music, your browser, and 
 
 ## What It Is
 
-Subsonic Neon Deck is a client-side Subsonic player built with p5.js and p5.sound. It connects directly to a Subsonic-compatible server, stores token authentication in browser storage, browses your library, plays streams, renders album metadata, shows lyrics when available, and gives you live audio controls with waveform and spectrum visualizers.
+Subsonic Neon Deck is a client-side Subsonic player built with p5.js and p5.sound. It connects directly to a Subsonic-compatible server, stores token authentication in browser storage, browses your library, plays streams, renders album metadata, applies effects, and gives you live audio controls with waveform, spectrum, and VU meter visualizers.
 
 The app has no build step. The browser loads the source files directly.
 
@@ -20,16 +20,17 @@ The interface is arranged like a modular deck:
 - `SOURCE` selects playlists and songs.
 - `TRANSPORT` handles play, pause, stop, loop, and filter activation.
 - `SPECTRUM` and `WAVEFORM` visualize the current audio signal.
+- `VU METERS` shows the stereo output level after volume, balance, EQ, and reverb changes.
 - `POSITION` tracks playback progress.
 - `LEVEL` controls volume, balance, and playback rate.
 - `FX BUS` exposes bass, mid, treble, reverb, and reverb mix.
 - `BROWSER` lets you explore the Subsonic library.
 - `QUEUE` lists upcoming tracks. Click any queued item to jump there and continue from that point.
-- `USER CONTROL` keeps the deck configurable with theme selection, `Show Lyrics`, `Lock Layout`, `Full`, and `Logout`.
+- `USER CONTROL` keeps the deck configurable with theme selection, `Move Panels`, `Move Elements`, `Full`, and `Logout`.
 
 Every knob has been replaced by sliders, and sliders accept both dragging and direct track clicks, so the controls behave more like compact audio-console faders than decorative widgets.
 
-Lyrics are hidden on first load so the deck gets the full initial viewport. Turn on `Show Lyrics` when you want the separate lyrics column.
+Lyrics are currently parked in comments because the external lyrics workflow is unavailable. The old UI and API path are preserved as TODO code for later repair, but they are not active in the deck.
 
 Use `Full` in `USER CONTROL` to toggle browser fullscreen mode; the canvas resizes after the browser enters or exits fullscreen.
 
@@ -49,9 +50,9 @@ The password is used only to generate the Subsonic token and salt. The browser s
 - `user`
 - `token`
 - `salt`
-- layout preferences
-- lyrics visibility
 - selected theme
+- layout preferences
+- layout ownership
 
 All of that lives under the `localStorage` key:
 
@@ -81,9 +82,9 @@ You can also use another static server. The important part is that `index.html`,
 
 The deck is movable because real screens are not all the same shape.
 
-Turn `Lock Layout` off in `USER CONTROL` to rearrange panels and controls. Drag a panel to move it together with the controls inside it, or drag individual controls when you want finer placement. The spectrum and waveform panels can also be resized from their lower-right corners.
+Turn `Move Panels` on in `USER CONTROL` to move or resize panels. Dragging a panel carries its owned controls with it, so panels behave like real containers.
 
-Turn `Lock Layout` back on to save the current arrangement in browser storage. The next reload restores it automatically.
+Turn `Move Elements` on when you want to move individual controls between panels. Turning both switches off saves the current arrangement and ownership data in browser storage. The next reload restores it automatically.
 
 On startup, the deck waits until login validation and player initialization finish before rendering the full control surface. Saved layout coordinates are restored as-is, even when they fall outside the currently visible canvas after switching between fullscreen and windowed mode.
 
@@ -116,6 +117,7 @@ lib/
   playinginfo.js   cover art and metadata panel
   spectrum.js      spectrum visualizer
   waveform.js      waveform visualizer
+  vumeters.js      stereo output VU meters
   slider_h.js      horizontal sliders
   slider_v.js      vertical sliders
   switch.js        toggle switches
@@ -139,7 +141,7 @@ The visual language is precise and signal-driven: restrained panels, scan-friend
 
 ## Current Caveats
 
-- Lyrics are integrated behind a visibility switch, but the lyrics workflow may need follow-up repair.
+- Lyrics are parked in comments until the external lyrics workflow is available again.
 - This is a browser client, so CORS and Subsonic server configuration can affect connectivity.
 - Browser storage is local to the browser profile. `Logout` removes saved auth fields but keeps layout preferences; clearing storage removes everything.
 

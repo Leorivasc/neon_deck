@@ -26,6 +26,7 @@ flowchart LR
     Sketch --> Switches[Switch controls]
     Sketch --> PlayerControl[PlayerControl]
     Sketch --> Layout[LayoutManager]
+    Sketch --> AudioEffects[AudioEffects]
     Sketch --> Player[Player]
 
     Client --> Server[Subsonic REST API]
@@ -35,6 +36,7 @@ flowchart LR
     Player --> Queue
     Player --> Client
     PlayerControl --> Player
+    AudioEffects --> Sound
     Queue --> Sketch
     Info --> Client
     Spectrum --> Sound
@@ -264,7 +266,7 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    NewSong{Song changed?} -->|Yes| Route[configureAudioRouting]
+    NewSong{Song changed?} -->|Yes| Route[AudioEffects.configure]
     FilterSwitch{Filter switch changed?} -->|Yes| Route
     NewSong -->|No| NoRoute[Keep current graph]
     FilterSwitch -->|No| NoRoute

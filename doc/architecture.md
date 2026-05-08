@@ -12,8 +12,9 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | --- | --- |
 | `index.html` | HTML shell, script loading, and canvas mount. The old lyrics DOM is commented out until that feature returns. |
 | `lib/theme.js` | Central theme registry, active `UI` palette, CSS variable application, and theme toggle helpers. |
-| `lib/sketch.js` | Main p5 sketch, setup flow, audio graph, playback, playlists, and high-level orchestration. |
+| `lib/sketch.js` | Main p5 sketch, setup flow, playback, playlists, and high-level orchestration. |
 | `lib/layoutmanager.js` | Owns panel layout, layout drag/resize state, element-panel ownership, and layout serialization. |
+| `lib/audioeffects.js` | Owns p5.sound routing, three-band EQ, reverb, volume, balance, rate, and change-gated audio parameter updates. |
 | `lib/subsonic.js` | Subsonic REST client, token auth query generation, response normalization. Lyrics API support is commented out for now. |
 | `lib/filebrowser.js` | Browses Subsonic indexes and music directories. Adds selected songs to the local playlist. |
 | `lib/player.js` | Loads streams, owns the active `p5.SoundFile`, and advances playback. |
@@ -106,9 +107,9 @@ When filters are enabled, the loaded song is disconnected from the master output
 - Treble band-pass -> treble gain -> master
 - Reverb processes the current song with its own wet/dry and gain controls.
 
-`configureAudioRouting()` rebuilds this graph only when the active song changes or the filter on/off switch changes. This avoids repeatedly stacking `p5.Reverb.process()` paths while a user moves sliders.
+`AudioEffects.configure()` rebuilds this graph only when the active song changes or the filter on/off switch changes. This avoids repeatedly stacking `p5.Reverb.process()` paths while a user moves sliders.
 
-Sliders update volume, balance, rate, bass, mid, treble, reverb mix, and reverb gain. Values are applied only when they change, and gain changes use a short ramp to reduce clicks.
+`lib/sketch.js` reads the slider values and passes them to `AudioEffects` as plain control data. Sliders update volume, balance, rate, bass, mid, treble, reverb mix, and reverb gain. Values are applied only when they change, and gain changes use a short ramp to reduce clicks.
 
 ## Slider Interaction
 

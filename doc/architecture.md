@@ -136,7 +136,7 @@ The lyrics feature is currently parked. The old DOM column, `Show Lyrics` switch
 
 The canvas layout is split between panels and movable elements:
 
-- `panelLayout`: developer-facing array of panel rectangles with `key`, `x`, `y`, `w`, `h`, `label`, and accent color.
+- `LayoutManager.getDefaultPanels()`: developer-facing source of default panel rectangles with `key`, `x`, `y`, `w`, `h`, `label`, and accent color. Add new default panels there.
 - p5-drawn controls: sliders, switches, visualizers, file browser, queue, progress bar, and `PlayingInfo`.
 - p5-created DOM controls: transport buttons, playlist select, and song select.
 
@@ -178,7 +178,7 @@ setPanelLayoutEditMode(true)
 setPanelLayoutEditMode(false)
 ```
 
-`getFullLayout()` reports both panels and movable controls. `getPanelLayout()` reports only the panel rectangles. A normal user does not need these APIs; they exist to tune the UI and either persist the result in browser storage or hard-code preferred coordinates back into `setup()` and `panelLayout`.
+`getFullLayout()` reports both panels and movable controls. `getPanelLayout()` reports only the panel rectangles. A normal user does not need these APIs; they exist to tune the UI and either persist the result in browser storage or hard-code preferred coordinates back into `LayoutManager.getDefaultPanels()`.
 
 ## Visualization Modules
 

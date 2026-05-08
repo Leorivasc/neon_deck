@@ -40,7 +40,7 @@ flowchart LR
     Spectrum --> Sound
     Waveform --> Sound
     VUMeters --> Sound
-    Layout --> Panels[panelLayout]
+    Layout --> Panels[Default panels]
     Layout --> Movables[Movable UI elements]
 ```
 
@@ -239,7 +239,7 @@ When saved layout data is loaded, persisted coordinates are applied as-is, even 
 
 ```mermaid
 flowchart LR
-    PanelLayout[panelLayout array] --> DrawPanels[drawPanel]
+    PanelLayout[LayoutManager.getDefaultPanels] --> DrawPanels[drawPanel]
     PanelLayout --> LayoutTools[USER CONTROL panel]
     LayoutTools --> ThemeToggle[Theme toggle]
     LayoutTools --> MovePanels[Move Panels switch]

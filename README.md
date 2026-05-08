@@ -115,6 +115,7 @@ lib/
   subsonic.js      Subsonic REST client and response normalization
   player.js        stream loading, playback, queue progression
   playercontrol.js transport button DOM controls
+  userappcontrol.js theme, fullscreen, and logout controls
   playlist.js      queue rendering and click-to-play behavior
   filebrowser.js   library browsing
   playinginfo.js   cover art and metadata panel

@@ -25,6 +25,7 @@ flowchart LR
     Sketch --> Sliders[Slider controls]
     Sketch --> Switches[Switch controls]
     Sketch --> PlayerControl[PlayerControl]
+    Sketch --> UserAppControl[UserAppControl]
     Sketch --> Layout[LayoutManager]
     Sketch --> AudioEffects[AudioEffects]
     Sketch --> Player[Player]
@@ -36,6 +37,7 @@ flowchart LR
     Player --> Queue
     Player --> Client
     PlayerControl --> Player
+    UserAppControl --> Theme
     AudioEffects --> Sound
     Queue --> Sketch
     Info --> Client

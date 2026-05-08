@@ -144,6 +144,7 @@ sequenceDiagram
     participant Player
     participant Queue as PlayList
     participant Client as SubsonicClient
+    participant AudioEffects
     participant P5 as p5.sound
 
     User->>Sketch: select song or press play
@@ -156,8 +157,8 @@ sequenceDiagram
     Player->>P5: song.play()
     Sketch->>Player: getSoundObject()
     Player-->>Sketch: newly loaded p5.SoundFile
-    Sketch->>Sketch: configureAudioRouting(true)
-    Sketch->>Sketch: apply slider values when changed
+    Sketch->>AudioEffects: configure(song, filtersOn, true)
+    Sketch->>AudioEffects: applyControls(slider values)
     Player->>Player: draw() watches end of song
     Player->>Queue: next()
     Player->>Player: playSongByPlaylistId(next)

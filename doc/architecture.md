@@ -59,6 +59,7 @@ u=<user>&t=<token>&s=<salt>&v=<api-version>&c=<client>&f=json
 ```
 
 The password is used only at setup time and is not stored by the app.
+The generated token and salt are stored in browser `localStorage`, so they should be treated as local browser credentials. Prefer HTTPS for remote Subsonic servers and use the deck from a trusted browser profile.
 
 `Logout` removes the stored auth fields and reloads the page. Layout data remains in browser storage so the same deck arrangement can be reused after signing in again.
 
@@ -70,6 +71,7 @@ The selected theme is also stored in `subsonicPlayerConfig.theme`. It is intenti
 
 - Builds `/rest/<endpoint>` URLs.
 - Adds authentication and JSON response parameters.
+- Encodes query parameters through `URLSearchParams`.
 - Checks HTTP status.
 - Checks for a `subsonic-response` object.
 - Returns the Subsonic response for successful calls.

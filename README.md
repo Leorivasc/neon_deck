@@ -62,6 +62,8 @@ subsonicPlayerConfig
 
 The player verifies the generated token with the server before saving it. If the password is rejected, the deck stays on the setup form and asks you to try again.
 
+Because this is a client-side app, those stored token credentials are readable by anyone with access to the same browser profile. Use HTTPS for remote Subsonic servers and run the deck from a trusted local copy.
+
 ## Quick Start
 
 Serve the project directory with any static web server:

@@ -6,6 +6,7 @@ This directory documents the browser player architecture, runtime flow, and the 
 
 - [Architecture](architecture.md): component responsibilities, data flow, layout tools, and inner workings.
 - [Diagrams](diagrams.md): Mermaid diagrams for startup, API calls, playback, browsing, audio routing, and layout editing.
+- [Project Memory](project-memory.md): current decisions, parked features, security notes, and follow-up context for future sessions.
 
 ## Project Summary
 
@@ -53,3 +54,4 @@ Stored fields:
 
 The first-run form asks for a password, but only the generated token and salt are stored.
 The generated token is checked with a Subsonic `ping` before it is saved, so rejected passwords keep the user on the setup form.
+Because this is a client-side app, those stored token credentials are still accessible to anyone with the same browser profile. Prefer HTTPS for remote Subsonic servers and use a trusted local copy of the deck.

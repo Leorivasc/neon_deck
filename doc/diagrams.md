@@ -25,7 +25,7 @@ flowchart LR
     Sketch --> Sliders[Slider controls]
     Sketch --> Switches[Switch controls]
     Sketch --> PlayerControl[PlayerControl]
-    Sketch --> Layout[Layout editor]
+    Sketch --> Layout[LayoutManager]
     Sketch --> Player[Player]
 
     Client --> Server[Subsonic REST API]

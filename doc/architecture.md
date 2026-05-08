@@ -12,7 +12,8 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | --- | --- |
 | `index.html` | HTML shell, script loading, and canvas mount. The old lyrics DOM is commented out until that feature returns. |
 | `lib/theme.js` | Central theme registry, active `UI` palette, CSS variable application, and theme toggle helpers. |
-| `lib/sketch.js` | Main p5 sketch, setup flow, audio graph, playback, playlists, and layout orchestration. |
+| `lib/sketch.js` | Main p5 sketch, setup flow, audio graph, playback, playlists, and high-level orchestration. |
+| `lib/layoutmanager.js` | Owns panel layout, layout drag/resize state, element-panel ownership, and layout serialization. |
 | `lib/subsonic.js` | Subsonic REST client, token auth query generation, response normalization. Lyrics API support is commented out for now. |
 | `lib/filebrowser.js` | Browses Subsonic indexes and music directories. Adds selected songs to the local playlist. |
 | `lib/player.js` | Loads streams, owns the active `p5.SoundFile`, and advances playback. |
@@ -137,9 +138,11 @@ The canvas layout is split between panels and movable elements:
 
 - `panelLayout`: developer-facing array of panel rectangles with `key`, `x`, `y`, `w`, `h`, `label`, and accent color.
 - p5-drawn controls: sliders, switches, visualizers, file browser, queue, progress bar, and `PlayingInfo`.
-- p5-created DOM controls: play/pause/stop buttons, playlist select, and song select.
+- p5-created DOM controls: transport buttons, playlist select, and song select.
 
 The DOM controls are parented to `#cnv`, whose CSS uses `position: relative`. This makes their p5 `position(x, y)` coordinates align with canvas coordinates instead of page-level coordinates.
+
+`lib/layoutmanager.js` owns the layout engine: panel drag state, resize state, element ownership, hit-testing, full-layout serialization, and edit overlays. `lib/sketch.js` provides generic movable item adapters for the live components and delegates the layout mechanics to `LayoutManager`.
 
 ### Layout Editing Switches
 
@@ -160,7 +163,7 @@ Panel headers are prioritized over controls inside the panel during layout editi
 
 The `SPECTRUM`, `WAVEFORM`, `VU METERS`, and `POSITION` panels expose a resize grip in their bottom-right corner while `Move Panels` is active. Dragging that corner resizes the panel and calls the matching component's `fitToPanel()` method so the plot or progress bar fills the available panel space. Minimum sizes live in the corresponding component modules instead of being hard-coded in `lib/sketch.js`.
 
-When an element is released, `lib/sketch.js` logs its new position and the full layout JSON to the browser console.
+When an element is released, `LayoutManager` logs its new position and the full layout JSON to the browser console.
 
 Saved layout entries are restored with their persisted coordinates, even when those coordinates are outside the currently visible canvas. This preserves the user's exact fullscreen layout instead of crowding panels against the windowed viewport edges.
 

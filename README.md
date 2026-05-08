@@ -110,6 +110,7 @@ index.html
 lib/
   theme.js         central theme registry and active UI palette
   sketch.js        main p5 lifecycle, UI layout, orchestration
+  layoutmanager.js panel layout, drag/resize, ownership, persistence model
   subsonic.js      Subsonic REST client and response normalization
   player.js        stream loading, playback, queue progression
   playercontrol.js transport button DOM controls

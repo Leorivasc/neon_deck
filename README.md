@@ -18,7 +18,7 @@ The interface is arranged like a modular deck:
 
 - `NOW PLAYING` shows the active song, artist, album, and cover art.
 - `SOURCE` selects playlists and songs.
-- `TRANSPORT` handles play, pause, stop, loop, and filter activation.
+- `TRANSPORT` handles previous, play, pause, stop, next, loop, and filter activation.
 - `SPECTRUM` and `WAVEFORM` visualize the current audio signal.
 - `VU METERS` shows the stereo output level after volume, balance, EQ, and reverb changes.
 - `POSITION` tracks playback progress.

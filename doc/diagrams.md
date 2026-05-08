@@ -24,6 +24,7 @@ flowchart LR
     Sketch --> VUMeters[VUMeters]
     Sketch --> Sliders[Slider controls]
     Sketch --> Switches[Switch controls]
+    Sketch --> PlayerControl[PlayerControl]
     Sketch --> Layout[Layout editor]
     Sketch --> Player[Player]
 
@@ -33,6 +34,7 @@ flowchart LR
     Browser --> Player
     Player --> Queue
     Player --> Client
+    PlayerControl --> Player
     Queue --> Sketch
     Info --> Client
     Spectrum --> Sound

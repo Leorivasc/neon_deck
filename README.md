@@ -112,6 +112,7 @@ lib/
   sketch.js        main p5 lifecycle, UI layout, orchestration
   subsonic.js      Subsonic REST client and response normalization
   player.js        stream loading, playback, queue progression
+  playercontrol.js transport button DOM controls
   playlist.js      queue rendering and click-to-play behavior
   filebrowser.js   library browsing
   playinginfo.js   cover art and metadata panel

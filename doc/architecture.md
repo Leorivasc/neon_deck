@@ -12,10 +12,11 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | --- | --- |
 | `index.html` | HTML shell, script loading, and canvas mount. The old lyrics DOM is commented out until that feature returns. |
 | `lib/theme.js` | Central theme registry, active `UI` palette, CSS variable application, and theme toggle helpers. |
-| `lib/sketch.js` | Main p5 sketch, setup flow, player controls, audio graph, playback, playlists, and layout orchestration. |
+| `lib/sketch.js` | Main p5 sketch, setup flow, audio graph, playback, playlists, and layout orchestration. |
 | `lib/subsonic.js` | Subsonic REST client, token auth query generation, response normalization. Lyrics API support is commented out for now. |
 | `lib/filebrowser.js` | Browses Subsonic indexes and music directories. Adds selected songs to the local playlist. |
 | `lib/player.js` | Loads streams, owns the active `p5.SoundFile`, and advances playback. |
+| `lib/playercontrol.js` | Owns the PREV/PLAY/PAUSE/STOP/NEXT DOM image buttons, styling, positioning, and layout metadata. |
 | `lib/playlist.js` | Local in-browser playlist queue, pointer navigation, list drawing, scrollbar handling. |
 | `lib/playinginfo.js` | Current song metadata and cover art display. |
 | `lib/progressbar.js` | Song-position progress bar and seek interaction. |

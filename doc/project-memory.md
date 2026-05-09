@@ -20,6 +20,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - `lib/userappcontrol.js` owns USER CONTROL actions: theme cycling, Move Panels, Move Elements, fullscreen, and logout.
 - `lib/audioeffects.js` owns p5.sound routing and audio effects: volume, balance, rate, EQ, reverb, and output analysis routing.
 - `lib/subsonic.js` owns Subsonic REST calls and authenticated URL generation.
+- `lib/theme.js` owns all theme-specific values, including colors, optional `panelFrame`, CSS shell shadow, and transport PNG filters.
 - Visual modules own their own rendering logic, sizing rules, and minimum dimensions:
   - `lib/spectrum.js`
   - `lib/waveform.js`
@@ -34,6 +35,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - If `Move Elements` is off, overlapping panels must not steal controls from each other.
 - Turning both layout switches off locks normal use and saves the layout and ownership into `localStorage`.
 - Spectrum, waveform, VU meters, and progress bar are panel-bound and should fit their panel after resizing.
+- The canvas shell border needs 2px of reserved size in `resizeCanvasToAvailableSpace()` so the right border remains visible.
 
 ## Playback And Audio
 
@@ -41,6 +43,8 @@ This file captures the working memory for future sessions. Keep it short, factua
 - VU meters should analyze the final output signal, after EQ, reverb, volume, and balance.
 - Spectrum bars should fill the available panel width rather than staying narrow with large gaps.
 - Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`.
+- `SUBMARINE` uses `panelFrame` for yellow panel frames while keeping panel contents blue and component/signal colors green.
+- Transport icon filters belong to each theme in `lib/theme.js` as `transportIconFilter`; `PlayerControl` only consumes `UI.transportIconFilter`.
 - Cyber transport icon filter currently uses a bright saturated look:
 
 ```css
@@ -56,7 +60,7 @@ sepia(0%) saturate(1400%) hue-rotate(408deg) brightness(500%) contrast(106%)
 - Submarine transport icon filter currently uses:
 
 ```css
-sepia(55%) saturate(1800%) hue-rotate(130deg) brightness(230%) contrast(108%)
+sepia(0%) saturate(1800%) hue-rotate(250deg) brightness(230%) contrast(108%)
 ```
 
 ## Parked Features

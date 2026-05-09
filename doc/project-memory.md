@@ -17,7 +17,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - `lib/layoutmanager.js` owns panel defaults, panel drag/resize, layout ownership, layout hit testing, and layout persistence helpers.
 - `LayoutManager.getDefaultPanels()` is the single source for default panel geometry. Add new default panels there.
 - `lib/playercontrol.js` owns the transport panel controls: PREV, PLAY, PAUSE, STOP, NEXT.
-- `lib/userappcontrol.js` owns USER CONTROL actions: theme, Move Panels, Move Elements, fullscreen, and logout.
+- `lib/userappcontrol.js` owns USER CONTROL actions: theme cycling, Move Panels, Move Elements, fullscreen, and logout.
 - `lib/audioeffects.js` owns p5.sound routing and audio effects: volume, balance, rate, EQ, reverb, and output analysis routing.
 - `lib/subsonic.js` owns Subsonic REST calls and authenticated URL generation.
 - Visual modules own their own rendering logic, sizing rules, and minimum dimensions:
@@ -40,10 +40,23 @@ This file captures the working memory for future sessions. Keep it short, factua
 - Transport buttons should prevent repeated PLAY from stacking multiple playback instances. PLAY should act only from stopped or paused state.
 - VU meters should analyze the final output signal, after EQ, reverb, volume, and balance.
 - Spectrum bars should fill the available panel width rather than staying narrow with large gaps.
+- Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`.
 - Cyber transport icon filter currently uses a bright saturated look:
 
 ```css
 invert(0%) sepia(91%) saturate(4000%) hue-rotate(135deg) brightness(300%) contrast(105%)
+```
+
+- Fallout transport icon filter currently uses:
+
+```css
+sepia(0%) saturate(1400%) hue-rotate(408deg) brightness(500%) contrast(106%)
+```
+
+- Submarine transport icon filter currently uses:
+
+```css
+sepia(55%) saturate(1800%) hue-rotate(130deg) brightness(230%) contrast(108%)
 ```
 
 ## Parked Features

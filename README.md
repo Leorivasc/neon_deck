@@ -34,7 +34,7 @@ Lyrics are currently parked in comments because the external lyrics workflow is 
 
 Use `Full` in `USER CONTROL` to toggle browser fullscreen mode; the canvas resizes after the browser enters or exits fullscreen.
 
-The player ships with two persisted themes: `CYBER`, the current dark neon console, and `STELLAR`, a light pastel variant with the same signal-language but a softer daytime palette.
+The player ships with four persisted themes: `CYBER`, the dark neon console; `STELLAR`, a light pastel variant with the same signal-language; `FALLOUT`, a warm terminal-style deck with orange signal glow and green accents; and `SUBMARINE`, a deep blue deck with yellow and green signal accents.
 
 ## First Run
 

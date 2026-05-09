@@ -49,6 +49,7 @@ Stored fields:
 - `token`
 - `salt`
 - `theme`
+- `randomPlay`
 - `layout`
 - `layoutOwners`
 

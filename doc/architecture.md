@@ -95,12 +95,15 @@ Playback is centered on `Player` in `lib/player.js`:
 - `playSongById(id)`: validates the song against the local playlist, builds the stream URL, loads it with `loadSound()`, and starts playback.
 - `playSong()`: plays the currently loaded `p5.SoundFile`.
 - `pauseSong()` and `stopSong()`: control current playback.
-- `playNext()`: advances the local `PlayList` pointer when continuous playback is enabled.
+- `playNext()`: advances the local `PlayList` pointer when continuous playback is enabled. If random play is enabled, `PlayList.next()` chooses a random unplayed candidate without reordering the visible queue.
 - `getSoundObject()`: exposes a newly loaded sound once so `lib/sketch.js` can route it through the audio graph.
 
 The local playlist is separate from the server playlist. `PlayList` stores the current queue in the browser and tracks a pointer to the current song.
 
 Clicking a visible row in the queue resolves the row with `PlayList.getItemIndexAt(mx, my)` and calls `Player.playSongByPlaylistId(index)`. That updates the queue pointer, starts the selected song, and leaves normal `playNext()` behavior intact so playback continues through the rest of the queue.
+
+Random play is intentionally not a queue shuffle. It leaves the queue order intact and changes only how `next()` selects the next pointer.
+When `Loop Playlist` is off, random play stops after its current random candidate round is exhausted. When loop is on, it starts a new random round.
 
 ## Audio Graph
 

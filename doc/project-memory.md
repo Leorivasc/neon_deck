@@ -44,6 +44,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 ## Playback And Audio
 
 - Transport buttons should prevent repeated PLAY from stacking multiple playback instances. PLAY should act only from stopped or paused state.
+- Random play belongs to `PlayList`: it changes next/previous pointer selection without reordering the visible queue. The switch lives in TRANSPORT.
 - VU meters should analyze the final output signal, after EQ, reverb, volume, and balance.
 - Vector scope should tap `p5.soundOut.input` so the PHASE panel reflects the final stereo output bus without rerouting audio.
 - Spectrum bars should fill the available panel width rather than staying narrow with large gaps.

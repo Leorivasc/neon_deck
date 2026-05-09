@@ -18,7 +18,7 @@ The interface is arranged like a modular deck:
 
 - `NOW PLAYING` shows the active song, artist, album, and cover art.
 - `SOURCE` selects playlists and songs.
-- `TRANSPORT` handles previous, play, pause, stop, next, loop, and filter activation.
+- `TRANSPORT` handles previous, play, pause, stop, next, loop, random play, and filter activation.
 - `SPECTRUM` and `WAVEFORM` visualize the current audio signal.
 - `VU METERS` shows the stereo output level after volume, balance, EQ, and reverb changes.
 - `PHASE` shows stereo width and correlation through a vectorscope connected to the output bus.
@@ -52,6 +52,7 @@ The password is used only to generate the Subsonic token and salt. The browser s
 - `token`
 - `salt`
 - selected theme
+- random play state
 - layout preferences
 - layout ownership
 

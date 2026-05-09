@@ -25,6 +25,7 @@ This file captures the working memory for future sessions. Keep it short, factua
   - `lib/spectrum.js`
   - `lib/waveform.js`
   - `lib/vumeters.js`
+  - `lib/vectorscope.js`
   - `lib/progressbar.js`
 
 ## Layout Behavior
@@ -34,13 +35,17 @@ This file captures the working memory for future sessions. Keep it short, factua
 - `Move Elements` lets individual controls move between panels.
 - If `Move Elements` is off, overlapping panels must not steal controls from each other.
 - Turning both layout switches off locks normal use and saves the layout and ownership into `localStorage`.
+- Default panel coordinates currently require a minimum canvas of `1224 x 1024`.
+- Default control coordinates were last synchronized from `getFullLayout()`, not just `getPanelLayout()`.
 - Spectrum, waveform, VU meters, and progress bar are panel-bound and should fit their panel after resizing.
+- PHASE is panel-bound and resizable; keep its default position away from the bottom edge so it has room to grow.
 - The canvas shell border needs 2px of reserved size in `resizeCanvasToAvailableSpace()` so the right border remains visible.
 
 ## Playback And Audio
 
 - Transport buttons should prevent repeated PLAY from stacking multiple playback instances. PLAY should act only from stopped or paused state.
 - VU meters should analyze the final output signal, after EQ, reverb, volume, and balance.
+- Vector scope should tap `p5.soundOut.input` so the PHASE panel reflects the final stereo output bus without rerouting audio.
 - Spectrum bars should fill the available panel width rather than staying narrow with large gaps.
 - Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`.
 - `SUBMARINE` uses `panelFrame` for yellow panel frames while keeping panel contents blue and component/signal colors green.

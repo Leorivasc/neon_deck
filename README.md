@@ -8,7 +8,7 @@ It is not a streaming service. It is your server, your music, your browser, and 
 
 ## What It Is
 
-Subsonic Neon Deck is a client-side Subsonic player built with p5.js and p5.sound. It connects directly to a Subsonic-compatible server, stores token authentication in browser storage, browses your library, plays streams, renders album metadata, applies effects, and gives you live audio controls with waveform, spectrum, and VU meter visualizers.
+Subsonic Neon Deck is a client-side Subsonic player built with p5.js and p5.sound. It connects directly to a Subsonic-compatible server, stores token authentication in browser storage, browses your library, plays streams, renders album metadata, applies effects, and gives you live audio controls with waveform, spectrum, VU meter, and vectorscope visualizers.
 
 The app has no build step. The browser loads the source files directly.
 
@@ -21,6 +21,7 @@ The interface is arranged like a modular deck:
 - `TRANSPORT` handles previous, play, pause, stop, next, loop, and filter activation.
 - `SPECTRUM` and `WAVEFORM` visualize the current audio signal.
 - `VU METERS` shows the stereo output level after volume, balance, EQ, and reverb changes.
+- `PHASE` shows stereo width and correlation through a vectorscope connected to the output bus.
 - `POSITION` tracks playback progress.
 - `LEVEL` controls volume, balance, and playback rate.
 - `FX BUS` exposes bass, mid, treble, reverb, and reverb mix.
@@ -124,6 +125,7 @@ lib/
   spectrum.js      spectrum visualizer
   waveform.js      waveform visualizer
   vumeters.js      stereo output VU meters
+  vectorscope.js   stereo phase vectorscope
   slider_h.js      horizontal sliders
   slider_v.js      vertical sliders
   switch.js        toggle switches

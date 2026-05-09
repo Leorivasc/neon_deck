@@ -26,6 +26,7 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | `lib/spectrum.js` | FFT spectrum visualization. |
 | `lib/waveform.js` | FFT waveform visualization. |
 | `lib/vumeters.js` | Output-aware stereo VU meter visualization. |
+| `lib/vectorscope.js` | Output-bus stereo phase/correlation visualization. |
 | `lib/slider_v.js` | Vertical slider control used by volume, EQ, and reverb. |
 | `lib/slider_h.js` | Horizontal slider control used by balance and playback speed. |
 | `lib/switch.js` | Toggle controls for filters, playlist looping, panel movement, and element movement. |
@@ -132,7 +133,7 @@ Most UI is drawn on the p5 canvas. Some p5-created HTML elements are positioned 
 
 The visual presentation is driven by `lib/theme.js`. `CYBER` is the dark neon default, `STELLAR` is a light pastel variant with similar accents, `FALLOUT` is a warm terminal-style deck with orange signal glow and green accents, and `SUBMARINE` is a deep blue deck with yellow and green signal accents. `index.html` provides CSS variables for the page shell, background, and canvas container. `lib/theme.js` applies theme values to those variables and exposes the active global `UI` palette. Canvas components read from `UI`, while `lib/sketch.js` subscribes to theme changes to restyle live DOM controls and slider accent colors.
 
-The canvas uses the available viewport with a minimum working size of `1024 x 868`. It resizes on `windowResized()` so large screens can expose more canvas area.
+The canvas uses the available viewport with a minimum working size of `1224 x 1024`. It resizes on `windowResized()` so large screens can expose more canvas area.
 
 The lyrics feature is currently parked. The old DOM column, `Show Lyrics` switch, `loadLyrics()` workflow, and `SubsonicClient.getLyrics()` method remain in comments with TODO markers, but no active runtime path calls the external lyrics API or reserves canvas space for that column.
 
@@ -165,7 +166,7 @@ Dragging a panel moves the panel and any element currently owned by that panel. 
 
 Panel headers are prioritized over controls inside the panel during layout editing. This matters for compact panels such as `POSITION`, where the progress bar can overlap much of the panel body; grabbing the header still selects the panel itself.
 
-The `SPECTRUM`, `WAVEFORM`, `VU METERS`, and `POSITION` panels expose a resize grip in their bottom-right corner while `Move Panels` is active. Dragging that corner resizes the panel and calls the matching component's `fitToPanel()` method so the plot or progress bar fills the available panel space. Minimum sizes live in the corresponding component modules instead of being hard-coded in `lib/sketch.js`.
+The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, and `POSITION` panels expose a resize grip in their bottom-right corner while `Move Panels` is active. Dragging that corner resizes the panel and calls the matching component's `fitToPanel()` method so the plot or progress bar fills the available panel space. Minimum sizes live in the corresponding component modules instead of being hard-coded in `lib/sketch.js`.
 
 When an element is released, `LayoutManager` logs its new position and the full layout JSON to the browser console.
 

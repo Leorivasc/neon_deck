@@ -15,6 +15,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 
 - `lib/sketch.js` should stay as the p5 lifecycle, orchestration, and main loop layer.
 - `lib/layoutmanager.js` owns panel defaults, panel drag/resize, layout ownership, layout hit testing, and layout persistence helpers.
+- `LayoutManager` filters drawable/interactive panels by asking the panel-bound component whether it is inactive.
 - `LayoutManager.getDefaultPanels()` is the single source for default panel geometry. Add new default panels there.
 - `lib/playercontrol.js` owns the transport panel controls: PREV, PLAY, PAUSE, STOP, NEXT.
 - `lib/userappcontrol.js` owns USER CONTROL actions: theme cycling, Move Panels, Move Elements, fullscreen, and logout.
@@ -45,6 +46,8 @@ This file captures the working memory for future sessions. Keep it short, factua
 
 - Transport buttons should prevent repeated PLAY from stacking multiple playback instances. PLAY should act only from stopped or paused state.
 - Random play belongs to `PlayList`: it changes next/previous pointer selection without reordering the visible queue. The switch lives in TRANSPORT.
+- Visualizers expose `setInactive()` / `isInactive()`. When inactive, their `draw()` returns immediately; `VectorScope` also disconnects its analyser nodes.
+- The `Skinny` switch lives in TRANSPORT. ON stores `skinnyMode: true`, hides/inactivates SPECTRUM, WAVEFORM, VU METERS, and PHASE, and skips their draw calls for low-power devices.
 - VU meters should analyze the final output signal, after EQ, reverb, volume, and balance.
 - Vector scope should tap `p5.soundOut.input` so the PHASE panel reflects the final stereo output bus without rerouting audio.
 - Spectrum bars should fill the available panel width rather than staying narrow with large gaps.

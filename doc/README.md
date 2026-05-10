@@ -50,8 +50,11 @@ Stored fields:
 - `salt`
 - `theme`
 - `randomPlay`
+- `skinnyMode`
 - `layout`
 - `layoutOwners`
+
+Older browser storage may still contain `visualizersEnabled`; the app treats `visualizersEnabled: false` as `skinnyMode: true` for compatibility.
 
 The first-run form asks for a password, but only the generated token and salt are stored.
 The generated token is checked with a Subsonic `ping` before it is saved, so rejected passwords keep the user on the setup form.

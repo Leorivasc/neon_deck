@@ -62,9 +62,9 @@ u=<user>&t=<token>&s=<salt>&v=<api-version>&c=<client>&f=json
 The password is used only at setup time and is not stored by the app.
 The generated token and salt are stored in browser `localStorage`, so they should be treated as local browser credentials. Prefer HTTPS for remote Subsonic servers and use the deck from a trusted browser profile.
 
-`Logout` removes the stored auth fields and reloads the page. Layout data remains in browser storage so the same deck arrangement can be reused after signing in again.
+`Logout` removes the stored auth fields, clears saved layout data (`layout` and `layoutOwners`), and reloads the page. The next sign-in starts from the current default panel arrangement.
 
-The selected theme is also stored in `subsonicPlayerConfig.theme`. It is intentionally kept when logging out, like layout data.
+The selected theme is also stored in `subsonicPlayerConfig.theme`. It is intentionally kept when logging out.
 
 ## API Boundary
 

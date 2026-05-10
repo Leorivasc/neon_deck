@@ -86,6 +86,7 @@ sepia(0%) saturate(1800%) hue-rotate(250deg) brightness(230%) contrast(108%)
 
 - Passwords are only used to generate the Subsonic token and salt.
 - Stored auth fields are `server`, `user`, `token`, and `salt` under `localStorage` key `subsonicPlayerConfig`.
+- Logout clears auth plus saved `layout` and `layoutOwners`; theme and other non-layout preferences are kept.
 - Stored token credentials are readable by anyone with the same browser profile, so this app should be used from a trusted local copy and preferably with HTTPS for remote servers.
 - `SubsonicClient` should build authenticated URLs through `buildAuthenticatedUrl()` so query values are encoded with `URLSearchParams`.
 - Avoid inserting variable text through `innerHTML`; prefer `textContent` or DOM node creation.

@@ -153,7 +153,7 @@ The visual language is precise and signal-driven: restrained panels, scan-friend
 
 - Lyrics are parked in comments until the external lyrics workflow is available again.
 - This is a browser client, so CORS and Subsonic server configuration can affect connectivity.
-- Browser storage is local to the browser profile. `Logout` removes saved auth fields but keeps layout preferences; clearing storage removes everything.
+- Browser storage is local to the browser profile. `Logout` removes saved auth fields and panel layout preferences; clearing storage removes everything.
 
 ## Why This Exists
 

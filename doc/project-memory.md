@@ -37,6 +37,8 @@ This file captures the working memory for future sessions. Keep it short, factua
 - If `Move Elements` is off, overlapping panels must not steal controls from each other.
 - Turning both layout switches off locks normal use and saves the layout and ownership into `localStorage`.
 - The canvas now uses the visible viewport size and avoids page scroll; panel defaults may still need tablet-specific refinement.
+- Desktop and tablet are the current responsive targets. A 10-inch tablet works well with viewport sizing, no page scroll, `Skinny` ON, and filters OFF.
+- Smartphone support is deferred and should likely be a separate view-based interface rather than a compressed full deck.
 - Default control coordinates were last synchronized from `getFullLayout()`, not just `getPanelLayout()`.
 - Spectrum, waveform, VU meters, and progress bar are panel-bound and should fit their panel after resizing.
 - PHASE is panel-bound and resizable; keep its default position away from the bottom edge so it has room to grow.

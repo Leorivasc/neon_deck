@@ -26,7 +26,9 @@ The app has no build step. The source files are loaded directly by the browser. 
 
 ## Runtime Layout
 
-The canvas uses the visible viewport space and avoids page scroll. Most controls are drawn by p5 on the canvas, while playback buttons and song/playlist selectors are p5-created DOM elements anchored to the canvas container.
+The canvas uses the visible viewport space and avoids page scroll. This keeps touch dragging on tablets focused on the deck instead of letting the browser page move underneath the controls. Most controls are drawn by p5 on the canvas, while playback buttons and song/playlist selectors are p5-created DOM elements anchored to the canvas container.
+
+The current responsive target is desktop and tablet-sized screens. A 10-inch tablet is expected to use the same deck concept, especially with `Skinny` enabled and filters disabled when performance matters. Smartphone support is intentionally deferred because it likely needs a separate view-based interface rather than a compressed version of the full deck.
 
 Layout editing is split into two switches. `Move Panels` lets panels move or resize; when a panel moves, the elements owned by that panel move with it. `Move Elements` lets individual controls move between panels. Turning both switches off returns the deck to normal locked use and saves the layout into the same browser storage object as the Subsonic connection config.
 

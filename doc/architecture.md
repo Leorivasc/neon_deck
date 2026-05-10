@@ -136,7 +136,9 @@ Most UI is drawn on the p5 canvas. Some p5-created HTML elements are positioned 
 
 The visual presentation is driven by `lib/theme.js`. `SUBMARINE` is the default deep blue deck with yellow and green signal accents, `CYBER` is a dark neon variant, `STELLAR` is a light pastel variant with similar accents, and `FALLOUT` is a warm terminal-style deck with orange signal glow and green accents. `index.html` provides CSS variables for the page shell, background, and canvas container. `lib/theme.js` applies theme values to those variables and exposes the active global `UI` palette. Canvas components read from `UI`, while `lib/sketch.js` subscribes to theme changes to restyle live DOM controls and slider accent colors.
 
-The canvas uses the visible viewport size instead of enforcing a fixed desktop minimum. It resizes on `windowResized()` so the deck stays inside the available screen and avoids page scroll.
+The canvas uses the visible viewport size instead of enforcing a fixed desktop minimum. It resizes on `windowResized()` so the deck stays inside the available screen and avoids page scroll. Avoiding page scroll matters on touch devices because drag gestures should move deck panels/elements, not the browser page.
+
+The current responsive target is desktop and tablet. The full deck can remain usable on a 10-inch tablet when `Skinny` is enabled and filters are disabled, because fewer analyzer-backed panels are visible and touch drag does not compete with page scrolling. Smartphone support is deferred; it should likely be a separate view-based UI rather than a scaled-down deck.
 
 The lyrics feature is currently parked. The old DOM column, `Show Lyrics` switch, `loadLyrics()` workflow, and `SubsonicClient.getLyrics()` method remain in comments with TODO markers, but no active runtime path calls the external lyrics API or reserves canvas space for that column.
 

@@ -56,6 +56,19 @@ Stored fields:
 
 Older browser storage may still contain `visualizersEnabled`; the app treats `visualizersEnabled: false` as `skinnyMode: true` for compatibility.
 
+## Skinny Mode
+
+`Skinny` is a low-power playback mode for tablets and slower devices. It keeps playback and controls available, but disables the analyzer-heavy visual panels.
+
+When enabled, Skinny hides and inactivates:
+
+- `SPECTRUM`
+- `WAVEFORM`
+- `VU METERS`
+- `PHASE`
+
+Those panels are not drawn, are not editable while hidden, and their audio analyzer taps are disconnected where possible. Audio filters are separate; use the `Filters` switch to disable EQ/reverb processing.
+
 The first-run form asks for a password, but only the generated token and salt are stored.
 The generated token is checked with a Subsonic `ping` before it is saved, so rejected passwords keep the user on the setup form.
 Because this is a client-side app, those stored token credentials are still accessible to anyone with the same browser profile. Prefer HTTPS for remote Subsonic servers and use a trusted local copy of the deck.

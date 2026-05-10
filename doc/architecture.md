@@ -172,7 +172,20 @@ Panel headers are prioritized over controls inside the panel during layout editi
 The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, and `POSITION` panels expose a resize grip in their bottom-right corner while `Move Panels` is active. Dragging that corner resizes the panel and calls the matching component's `fitToPanel()` method so the plot or progress bar fills the available panel space. Minimum sizes live in the corresponding component modules instead of being hard-coded in `lib/sketch.js`.
 
 Visualizers can be marked inactive by their modules. `LayoutManager` asks the panel-bound component for `isInactive()` and omits inactive panels from drawing, resize handles, and panel dragging, while still keeping their saved/default layout data available.
-The `Skinny` switch in `TRANSPORT` toggles that inactive state for `SPECTRUM`, `WAVEFORM`, `VU METERS`, and `PHASE`, and persists the state as `subsonicPlayerConfig.skinnyMode`. Skinny mode also skips the visualizer draw calls in the main loop so low-power devices avoid both canvas and analyzer work.
+
+### Skinny Mode
+
+`Skinny` lives in the `TRANSPORT` panel and persists as `subsonicPlayerConfig.skinnyMode`. It is a low-power mode for tablets and slower devices where the audio path can stutter when both filters and analyzer-backed drawings are active.
+
+When `Skinny` is ON:
+
+- `SPECTRUM` is hidden, skipped by the main draw loop, and its `p5.FFT` analyzer is disconnected from `p5.soundOut.fftMeter`.
+- `WAVEFORM` is hidden, skipped by the main draw loop, and its `p5.FFT` analyzer is disconnected from `p5.soundOut.fftMeter`.
+- `VU METERS` is hidden, skipped by the main draw loop, and its `p5.Amplitude` worklet is disconnected from `p5.soundOut.meter`.
+- `PHASE`/`VectorScope` is hidden, skipped by the main draw loop, and its Web Audio analyser tap is disconnected from `p5.soundOut.input`.
+- `LayoutManager` omits those inactive panels from drawing, resize handles, panel dragging, and panel-bound hitboxes.
+
+When `Skinny` is OFF, those modules reconnect their analyzers and return to their normal draw path. Skinny mode does not disable playback, transport controls, source controls, queue/browser drawing, progress, layout switches, theme controls, or audio filters; filters remain controlled by the separate `Filters` switch.
 
 When an element is released, `LayoutManager` logs its new position and the full layout JSON to the browser console.
 

@@ -48,6 +48,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - Random play belongs to `PlayList`: it changes next/previous pointer selection without reordering the visible queue. The switch lives in TRANSPORT.
 - Visualizers expose `setInactive()` / `isInactive()`. When inactive, their `draw()` returns immediately; `VectorScope` also disconnects its analyser nodes.
 - The `Skinny` switch lives in TRANSPORT. ON stores `skinnyMode: true`, hides/inactivates SPECTRUM, WAVEFORM, VU METERS, and PHASE, and skips their draw calls for low-power devices.
+- `##SKINNY MODE` comments mark the code paths that own low-power behavior: switch state, draw skipping, module-level inactive handling, analyzer disconnection, and LayoutManager panel filtering.
 - VU meters should analyze the final output signal, after EQ, reverb, volume, and balance.
 - Vector scope should tap `p5.soundOut.input` so the PHASE panel reflects the final stereo output bus without rerouting audio.
 - Spectrum bars should fill the available panel width rather than staying narrow with large gaps.

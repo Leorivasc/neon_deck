@@ -134,7 +134,7 @@ Most UI is drawn on the p5 canvas. Some p5-created HTML elements are positioned 
 - Playlist selector.
 - Song selector.
 
-The visual presentation is driven by `lib/theme.js`. `CYBER` is the dark neon default, `STELLAR` is a light pastel variant with similar accents, `FALLOUT` is a warm terminal-style deck with orange signal glow and green accents, and `SUBMARINE` is a deep blue deck with yellow and green signal accents. `index.html` provides CSS variables for the page shell, background, and canvas container. `lib/theme.js` applies theme values to those variables and exposes the active global `UI` palette. Canvas components read from `UI`, while `lib/sketch.js` subscribes to theme changes to restyle live DOM controls and slider accent colors.
+The visual presentation is driven by `lib/theme.js`. `SUBMARINE` is the default deep blue deck with yellow and green signal accents, `CYBER` is a dark neon variant, `STELLAR` is a light pastel variant with similar accents, and `FALLOUT` is a warm terminal-style deck with orange signal glow and green accents. `index.html` provides CSS variables for the page shell, background, and canvas container. `lib/theme.js` applies theme values to those variables and exposes the active global `UI` palette. Canvas components read from `UI`, while `lib/sketch.js` subscribes to theme changes to restyle live DOM controls and slider accent colors.
 
 The canvas uses the available viewport with a minimum working size of `1224 x 1024`. It resizes on `windowResized()` so large screens can expose more canvas area.
 

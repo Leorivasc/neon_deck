@@ -52,7 +52,9 @@ This file captures the working memory for future sessions. Keep it short, factua
 - VU meters should analyze the final output signal, after EQ, reverb, volume, and balance.
 - Vector scope should tap `p5.soundOut.input` so the PHASE panel reflects the final stereo output bus without rerouting audio.
 - Spectrum bars should fill the available panel width rather than staying narrow with large gaps.
+- Long-running playback should dispose replaced `p5.SoundFile` objects and recreated `p5.Reverb` instances; stopping/disconnecting alone can leave p5.sound objects and Web Audio buffers around after several tracks.
 - Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`.
+- `SUBMARINE` is the default theme through `DEFAULT_THEME_NAME` in `lib/theme.js`; saved user themes still override it.
 - `SUBMARINE` uses `panelFrame` for yellow panel frames while keeping panel contents blue and component/signal colors green.
 - Transport icon filters belong to each theme in `lib/theme.js` as `transportIconFilter`; `PlayerControl` only consumes `UI.transportIconFilter`.
 - Cyber transport icon filter currently uses a bright saturated look:

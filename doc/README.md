@@ -26,7 +26,7 @@ The app has no build step. The source files are loaded directly by the browser. 
 
 ## Runtime Layout
 
-The canvas uses the maximum available viewport space, with a minimum working size of `1224 x 1024`. Most controls are drawn by p5 on the canvas, while playback buttons and song/playlist selectors are p5-created DOM elements anchored to the canvas container.
+The canvas uses the visible viewport space and avoids page scroll. Most controls are drawn by p5 on the canvas, while playback buttons and song/playlist selectors are p5-created DOM elements anchored to the canvas container.
 
 Layout editing is split into two switches. `Move Panels` lets panels move or resize; when a panel moves, the elements owned by that panel move with it. `Move Elements` lets individual controls move between panels. Turning both switches off returns the deck to normal locked use and saves the layout into the same browser storage object as the Subsonic connection config.
 

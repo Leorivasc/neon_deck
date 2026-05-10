@@ -35,7 +35,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - `Move Elements` lets individual controls move between panels.
 - If `Move Elements` is off, overlapping panels must not steal controls from each other.
 - Turning both layout switches off locks normal use and saves the layout and ownership into `localStorage`.
-- Default panel coordinates currently require a minimum canvas of `1224 x 1024`.
+- The canvas now uses the visible viewport size and avoids page scroll; panel defaults may still need tablet-specific refinement.
 - Default control coordinates were last synchronized from `getFullLayout()`, not just `getPanelLayout()`.
 - Spectrum, waveform, VU meters, and progress bar are panel-bound and should fit their panel after resizing.
 - PHASE is panel-bound and resizable; keep its default position away from the bottom edge so it has room to grow.

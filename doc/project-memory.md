@@ -45,6 +45,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - Default panel/control coordinates were last synchronized from the supplied `getFullLayout()` dump that includes DATA FEED and USER CONTROL at the left edge.
 - Spectrum, waveform, VU meters, POSITION/progress bar, PHASE, and DATA FEED are panel-bound and should fit their panel after resizing.
 - PHASE is panel-bound and resizable; keep its default position away from the bottom edge so it has room to grow.
+- BROWSER, QUEUE, and DATA FEED consume mouse wheel input while hovered; sliders keep their own wheel behavior while hovered.
 - The canvas shell border needs 2px of reserved size in `resizeCanvasToAvailableSpace()` so the right border remains visible.
 
 ## Playback And Audio

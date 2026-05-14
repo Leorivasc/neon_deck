@@ -411,6 +411,7 @@ classDiagram
         draw(song)
         fitToPanel(panel)
         getMinPanelSize()
+        getTelemetry()
     }
 
     class WaveForm {
@@ -452,6 +453,10 @@ classDiagram
         handleMouseDrag(mx, my)
     }
 
+    class Sketch {
+        sampleTelemetry()
+    }
+
     FileBrowser --> SubsonicClient
     FileBrowser --> PlayList
     FileBrowser --> Player
@@ -465,7 +470,8 @@ classDiagram
     VectorScope --> P5Sound
     TelemetryPanel --> TelemetryLog
     TelemetryPanel --> TextListBox
-    Spectrum --> TelemetryLog
-    VUMeters --> TelemetryLog
-    VectorScope --> TelemetryLog
+    Spectrum ..> Sketch
+    VUMeters ..> Sketch
+    VectorScope ..> Sketch
+    Sketch --> TelemetryLog
 ```

@@ -35,7 +35,9 @@ The current responsive target is desktop and tablet-sized screens. A 10-inch tab
 
 Layout editing is split into two switches. `Move Panels` lets panels move or resize; when a panel moves, the elements owned by that panel move with it. `Move Elements` lets individual controls move between panels. Turning both switches off returns the deck to normal locked use and saves the layout into the same browser storage object as the Subsonic connection config.
 
-The `USER CONTROL` panel contains the theme toggle, `Move Panels`, `Move Elements`, `Full`, and `Logout`. The theme toggle cycles through `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`, then persists the selection in browser storage. `Full` toggles browser fullscreen mode and the canvas resizes on fullscreen changes. The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, and `POSITION` panels can be resized from their lower-right corner while panel movement is enabled.
+The `USER CONTROL` panel contains the theme toggle, `Move Panels`, `Move Elements`, `Full`, and `Logout`. The theme toggle cycles through `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`, then persists the selection in browser storage. `Full` toggles browser fullscreen mode and the canvas resizes on fullscreen changes. The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, `POSITION`, and `DATA FEED` panels can be resized from their lower-right corner while panel movement is enabled.
+
+Scrollable canvas text/list surfaces use native deck gestures: `BROWSER`, `QUEUE`, and `DATA FEED` respond to mouse wheel input while hovered, and their scrollbars remain draggable for precise review.
 
 The deck draw loop is guarded by an `appReady` state. During async login validation or player initialization, the canvas shows a startup status instead of drawing incomplete panels. Saved layout coordinates are restored as-is, even if a fullscreen layout is partly outside the visible area after returning to windowed mode.
 

@@ -22,6 +22,9 @@ flowchart LR
     Sketch --> Spectrum[Spectrum]
     Sketch --> Waveform[WaveForm]
     Sketch --> VUMeters[VUMeters]
+    Sketch --> VectorScope[VectorScope]
+    Sketch --> TelemetryLog[TelemetryLog]
+    Sketch --> TelemetryPanel[TelemetryPanel]
     Sketch --> Sliders[Slider controls]
     Sketch --> Switches[Switch controls]
     Sketch --> PlayerControl[PlayerControl]
@@ -44,6 +47,13 @@ flowchart LR
     Spectrum --> Sound
     Waveform --> Sound
     VUMeters --> Sound
+    VectorScope --> Sound
+    Spectrum -. getTelemetry .-> Sketch
+    VUMeters -. getTelemetry .-> Sketch
+    VectorScope -. getTelemetry .-> Sketch
+    PlayerControl --> TelemetryLog
+    TelemetryPanel --> TelemetryLog
+    TelemetryPanel --> TextListBox
     Layout --> Panels[Default panels]
     Layout --> Movables[Movable UI elements]
 ```
@@ -309,6 +319,31 @@ flowchart TD
     DirectMaster --> VUMeters
 ```
 
+## DATA FEED Telemetry
+
+```mermaid
+flowchart TD
+    SystemEvents[System/UI events] --> Emit[TelemetryLog.emit]
+    Transport[PlayerControl transport actions] --> Emit
+    Stream[Song load and metadata events] --> Emit
+    Queue[Queue and playlist events] --> Emit
+    FX[FX/EQ control snapshots] --> Emit
+
+    Spectrum[Spectrum.getTelemetry] --> Sampler[sketch.js telemetry sampler]
+    VUMeters[VUMeters.getTelemetry] --> Sampler
+    VectorScope[VectorScope.getTelemetry] --> Sampler
+    Sampler --> Emit
+
+    Emit --> Buffer[TelemetryLog entries]
+    Buffer --> Panel[TelemetryPanel]
+    Panel --> TextBox[TextListBox]
+    TextBox --> Canvas[DATA FEED panel]
+
+    Wheel[Mouse wheel / scrollbar drag] --> TextBox
+    TextBox --> Pin[Pin to history while user reviews older lines]
+    Pin --> Bottom[Return to bottom resumes autoscroll]
+```
+
 ## Local Data Relationships
 
 ```mermaid
@@ -388,6 +423,33 @@ classDiagram
         draw(song)
         fitToPanel(panel)
         getMinPanelSize()
+        getTelemetry()
+    }
+
+    class VectorScope {
+        draw()
+        fitToPanel(panel)
+        getMinPanelSize()
+        getTelemetry()
+    }
+
+    class TelemetryLog {
+        emit(source, message, options)
+        getEntries()
+        clear()
+    }
+
+    class TelemetryPanel {
+        draw()
+        fitToPanel(panel)
+        handleWheel(delta)
+    }
+
+    class TextListBox {
+        setItems(items)
+        draw()
+        handleWheel(delta)
+        handleMouseDrag(mx, my)
     }
 
     FileBrowser --> SubsonicClient
@@ -400,4 +462,10 @@ classDiagram
     Spectrum --> P5Sound
     WaveForm --> P5Sound
     VUMeters --> P5Sound
+    VectorScope --> P5Sound
+    TelemetryPanel --> TelemetryLog
+    TelemetryPanel --> TextListBox
+    Spectrum --> TelemetryLog
+    VUMeters --> TelemetryLog
+    VectorScope --> TelemetryLog
 ```

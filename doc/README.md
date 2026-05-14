@@ -12,7 +12,7 @@ This directory documents the browser player architecture, runtime flow, and the 
 
 Subsonic Neon Deck is a client-side Subsonic music player built with p5.js and p5.sound. It runs from `index.html`, loads local JavaScript modules from `lib/`, asks for Subsonic connection details on first run, stores token authentication data in `localStorage`, then uses the Subsonic REST API to browse music, play streams, show cover art, apply effects, and visualize audio.
 
-The app has no build step. The source files are loaded directly by the browser. The current presentation uses a themeable canvas deck with `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE` themes. The former lyrics column is parked in comments until the external lyrics workflow is available again.
+The app has no build step. The source files are loaded directly by the browser. The current presentation uses a themeable canvas deck with `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE` themes. The deck also includes a `DATA FEED` telemetry log fed by system events, transport actions, stream metadata, FX/EQ state, and analyzer summaries. The former lyrics column is parked in comments until the external lyrics workflow is available again.
 
 ## Entry Points
 
@@ -23,6 +23,9 @@ The app has no build step. The source files are loaded directly by the browser. 
 - `lib/filebrowser.js`: music-library navigation.
 - `lib/player.js`: stream loading and playback state.
 - `lib/playlist.js`: local playback queue and playlist rendering.
+- `lib/textlistbox.js`: reusable p5 text/list box for logs and future command-style tools.
+- `lib/telemetrylog.js`: shared DATA FEED event buffer with timestamps, throttle, and dedupe.
+- `lib/telemetrypanel.js`: panel-bound DATA FEED renderer.
 
 ## Runtime Layout
 

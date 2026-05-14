@@ -12,7 +12,7 @@ This directory documents the browser player architecture, runtime flow, and the 
 
 Subsonic Neon Deck is a client-side Subsonic music player built with p5.js and p5.sound. It runs from `index.html`, loads local JavaScript modules from `lib/`, asks for Subsonic connection details on first run, stores token authentication data in `localStorage`, then uses the Subsonic REST API to browse music, play streams, show cover art, apply effects, and visualize audio.
 
-The app has no build step. The source files are loaded directly by the browser. The current presentation uses a themeable canvas deck with `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE` themes. The deck also includes a `DATA FEED` telemetry log fed by system events, transport actions, stream metadata, FX/EQ state, and analyzer summaries. The former lyrics column is parked in comments until the external lyrics workflow is available again.
+The app has no build step. The source files are loaded directly by the browser. The current presentation uses a themeable canvas deck with `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO` themes. The deck also includes a `DATA FEED` telemetry log fed by system events, transport actions, stream metadata, FX/EQ state, and analyzer summaries. The former lyrics column is parked in comments until the external lyrics workflow is available again.
 
 ## Entry Points
 
@@ -35,7 +35,7 @@ The current responsive target is desktop and tablet-sized screens. A 10-inch tab
 
 Layout editing is split into two switches. `Move Panels` lets panels move or resize; when a panel moves, the elements owned by that panel move with it. `Move Elements` lets individual controls move between panels. Turning both switches off returns the deck to normal locked use and saves the layout into the same browser storage object as the Subsonic connection config.
 
-The `USER CONTROL` panel contains the theme toggle, `Move Panels`, `Move Elements`, `Full`, and `Logout`. The theme toggle cycles through `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`, then persists the selection in browser storage. `Full` toggles browser fullscreen mode and the canvas resizes on fullscreen changes. The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, `POSITION`, and `DATA FEED` panels can be resized from their lower-right corner while panel movement is enabled.
+The `USER CONTROL` panel contains the theme toggle, `Move Panels`, `Move Elements`, `Full`, and `Logout`. The theme toggle cycles through `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO`, then persists the selection in browser storage. `Full` toggles browser fullscreen mode and the canvas resizes on fullscreen changes. The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, `POSITION`, and `DATA FEED` panels can be resized from their lower-right corner while panel movement is enabled.
 
 Scrollable canvas text/list surfaces use native deck gestures: `BROWSER`, `QUEUE`, and `DATA FEED` respond to mouse wheel input while hovered, and their scrollbars remain draggable for precise review.
 

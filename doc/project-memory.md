@@ -62,7 +62,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - DATA FEED uses `TextListBox` autoscroll. User wheel/scrollbar interaction pins the view to history; returning to the bottom resumes autoscroll.
 - Telemetry metrics should be exposed as data methods such as `getTelemetry()` on analyzer modules, then sampled/formatted centrally from `sketch.js` to avoid coupling visualizers to log text.
 - Long-running playback should dispose replaced `p5.SoundFile` objects and recreated `p5.Reverb` instances; stopping/disconnecting alone can leave p5.sound objects and Web Audio buffers around after several tracks.
-- Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`.
+- Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO`.
 - `SUBMARINE` is the default theme through `DEFAULT_THEME_NAME` in `lib/theme.js`; saved user themes still override it.
 - `SUBMARINE` uses `panelFrame` for yellow panel frames while keeping panel contents blue and component/signal colors green.
 - Transport icon filters belong to each theme in `lib/theme.js` as `transportIconFilter`; `PlayerControl` only consumes `UI.transportIconFilter`.
@@ -82,6 +82,18 @@ sepia(0%) saturate(1400%) hue-rotate(408deg) brightness(500%) contrast(106%)
 
 ```css
 sepia(0%) saturate(1800%) hue-rotate(250deg) brightness(230%) contrast(108%)
+```
+
+- Matrix transport icon filter currently uses:
+
+```css
+sepia(100%) saturate(1800%) hue-rotate(62deg) brightness(190%) contrast(112%)
+```
+
+- Volcano transport icon filter currently uses:
+
+```css
+sepia(100%) saturate(2800%) hue-rotate(2deg) brightness(220%) contrast(110%)
 ```
 
 ## Parked Features

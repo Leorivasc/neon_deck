@@ -139,7 +139,7 @@ Most UI is drawn on the p5 canvas. Some p5-created HTML elements are positioned 
 - Playlist selector.
 - Song selector.
 
-The visual presentation is driven by `lib/theme.js`. `SUBMARINE` is the default deep blue deck with yellow and green signal accents, `CYBER` is a dark neon variant, `STELLAR` is a light pastel variant with similar accents, and `FALLOUT` is a warm terminal-style deck with orange signal glow and green accents. `index.html` provides CSS variables for the page shell, background, and canvas container. `lib/theme.js` applies theme values to those variables and exposes the active global `UI` palette. Canvas components read from `UI`, while `lib/sketch.js` subscribes to theme changes to restyle live DOM controls and slider accent colors.
+The visual presentation is driven by `lib/theme.js`. `SUBMARINE` is the default deep blue deck with yellow and green signal accents, `CYBER` is a dark neon variant, `STELLAR` is a light pastel variant with similar accents, `FALLOUT` is a warm terminal-style deck with orange signal glow and green accents, `MATRIX` is a black-and-green terminal variant, and `VOLCANO` is a lava-red variant with orange signal heat. `index.html` provides CSS variables for the page shell, background, and canvas container. `lib/theme.js` applies theme values to those variables and exposes the active global `UI` palette. Canvas components read from `UI`, while `lib/sketch.js` subscribes to theme changes to restyle live DOM controls and slider accent colors.
 
 The canvas uses the visible viewport size instead of enforcing a fixed desktop minimum. It resizes on `windowResized()` so the deck stays inside the available screen and avoids page scroll. Avoiding page scroll matters on touch devices because drag gestures should move deck panels/elements, not the browser page.
 
@@ -184,7 +184,7 @@ The deck has two runtime layout-editing tools:
 
 When both switches are off, the app behaves normally and the layout is locked. Turning either switch off after editing persists layout data into `subsonicPlayerConfig.layout` and element ownership into `subsonicPlayerConfig.layoutOwners`.
 
-The `USER CONTROL` panel contains the theme toggle, `Move Panels`, `Move Elements`, `Full`, and `Logout` controls. The theme toggle cycles through `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`, then stores the result in browser storage. `Full` toggles browser fullscreen mode through the Fullscreen API and resize handling updates the canvas after fullscreen changes. It participates in the same movable panel model as the other panels, so moving the panel also moves controls owned by it.
+The `USER CONTROL` panel contains the theme toggle, `Move Panels`, `Move Elements`, `Full`, and `Logout` controls. The theme toggle cycles through `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO`, then stores the result in browser storage. `Full` toggles browser fullscreen mode through the Fullscreen API and resize handling updates the canvas after fullscreen changes. It participates in the same movable panel model as the other panels, so moving the panel also moves controls owned by it.
 
 While either edit switch is active, the app disables pointer events on the DOM controls so the canvas receives drag events. This means buttons and selects are movable rather than usable during layout editing.
 

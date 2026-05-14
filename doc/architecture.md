@@ -20,6 +20,9 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | `lib/player.js` | Loads streams, owns the active `p5.SoundFile`, and advances playback. |
 | `lib/playercontrol.js` | Owns the PREV/PLAY/PAUSE/STOP/NEXT DOM image buttons, styling, positioning, and layout metadata. |
 | `lib/userappcontrol.js` | Owns the theme, fullscreen, and logout controls, including drawing, hit-testing, fullscreen listener state, and layout metadata. |
+| `lib/textlistbox.js` | Reusable p5 fixed-row text/list box with truncation, scroll, scrollbar drag, and bottom-stick behavior. |
+| `lib/telemetrylog.js` | Shared DATA FEED event buffer with timestamps, max-entry trimming, throttle, and dedupe. |
+| `lib/telemetrypanel.js` | Panel-bound DATA FEED renderer that formats telemetry entries through `TextListBox`. |
 | `lib/playlist.js` | Local in-browser playlist queue, pointer navigation, list drawing, scrollbar handling. |
 | `lib/playinginfo.js` | Current song metadata and cover art display. |
 | `lib/progressbar.js` | Song-position progress bar and seek interaction. |
@@ -142,6 +145,22 @@ The current responsive target is desktop and tablet. The full deck can remain us
 
 The lyrics feature is currently parked. The old DOM column, `Show Lyrics` switch, `loadLyrics()` workflow, and `SubsonicClient.getLyrics()` method remain in comments with TODO markers, but no active runtime path calls the external lyrics API or reserves canvas space for that column.
 
+### DATA FEED And Text Surfaces
+
+`DATA FEED` is the first reusable text-oriented panel in the deck. It is still canvas-first: the log is drawn with p5 instead of using a DOM `<textarea>`, so it participates naturally in the panel layout and theme system.
+
+The telemetry path is split into three layers:
+
+- `TelemetryLog` stores entries and owns `emit(source, message, options)`. It adds timestamps, limits buffer size, throttles noisy sources, and deduplicates repeated messages.
+- `TelemetryPanel` formats entries and renders the panel content.
+- `TextListBox` draws the fixed-row text box, truncates long lines, handles mouse wheel scrolling, and supports scrollbar dragging.
+
+`SYSTEM` entries render full date and time. Other sources render only time so repeated audio and analyzer logs stay readable in narrow panels.
+
+Continuous analyzer values are not pushed directly from `draw()` methods. Instead, visual modules expose data through `getTelemetry()` and `lib/sketch.js` samples those values on a timer, converting them into log entries. This keeps modules such as `Spectrum`, `VUMeters`, and `VectorScope` responsible for audio measurements, while `TelemetryLog` and the sampler decide what becomes visible text.
+
+When the user scrolls or drags the DATA FEED scrollbar upward, `TextListBox` pins the view to history and stops forcing autoscroll. Returning to the bottom resumes normal bottom-stick behavior as new entries arrive.
+
 ## Layout Model
 
 The canvas layout is split between panels and movable elements:
@@ -172,6 +191,8 @@ Dragging a panel moves the panel and any element currently owned by that panel. 
 Panel headers are prioritized over controls inside the panel during layout editing. This matters for compact panels such as `POSITION`, where the progress bar can overlap much of the panel body; grabbing the header still selects the panel itself.
 
 The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, and `POSITION` panels expose a resize grip in their bottom-right corner while `Move Panels` is active. Dragging that corner resizes the panel and calls the matching component's `fitToPanel()` method so the plot or progress bar fills the available panel space. Minimum sizes live in the corresponding component modules instead of being hard-coded in `lib/sketch.js`.
+
+`DATA FEED` is also panel-bound and resizable. Its minimum size and inner text-box fitting live in `TelemetryPanel`; the generic row/scroll behavior lives in `TextListBox`.
 
 Visualizers can be marked inactive by their modules. `LayoutManager` asks the panel-bound component for `isInactive()` and omits inactive panels from drawing, resize handles, and panel dragging, while still keeping their saved/default layout data available.
 
@@ -213,7 +234,10 @@ Audio visualizers are intentionally module-owned:
 - `Spectrum` owns its FFT drawing, responsive bar sizing, panel fit behavior, and minimum panel size.
 - `WaveForm` owns waveform drawing, panel fit behavior, and minimum panel size.
 - `VUMeters` owns stereo output metering, peak smoothing, panel fit behavior, and minimum panel size.
+- `VectorScope` owns stereo correlation, phase drawing, panel fit behavior, and minimum panel size.
 - `ProgressBarH` owns song-position drawing, seek interaction, panel fit behavior, and minimum panel size.
+
+Analyzer modules may expose `getTelemetry()` for the central telemetry sampler. These methods return structured values rather than formatted strings, keeping log presentation out of visualizer modules.
 
 `lib/sketch.js` acts as the orchestrator: it creates the modules, asks them to draw, and calls `fitToPanel()` when their panel changes. Component-specific geometry rules stay in each module so the main sketch remains focused on lifecycle, input routing, and audio graph coordination.
 

@@ -22,6 +22,9 @@ This file captures the working memory for future sessions. Keep it short, factua
 - `lib/audioeffects.js` owns p5.sound routing and audio effects: volume, balance, rate, EQ, reverb, and output analysis routing.
 - `lib/subsonic.js` owns Subsonic REST calls and authenticated URL generation.
 - `lib/theme.js` owns all theme-specific values, including colors, optional `panelFrame`, CSS shell shadow, and transport PNG filters.
+- `lib/textlistbox.js` is a reusable p5 fixed-row text/list primitive for future text panels, command-style tools, and logs.
+- `lib/telemetrylog.js` owns the shared DATA FEED event buffer, timestamps, throttling, and dedupe.
+- `lib/telemetrypanel.js` renders the DATA FEED panel through `TextListBox`.
 - Visual modules own their own rendering logic, sizing rules, and minimum dimensions:
   - `lib/spectrum.js`
   - `lib/waveform.js`
@@ -54,6 +57,9 @@ This file captures the working memory for future sessions. Keep it short, factua
 - VU meters should analyze the final output signal, after EQ, reverb, volume, and balance.
 - Vector scope should tap `p5.soundOut.input` so the PHASE panel reflects the final stereo output bus without rerouting audio.
 - Spectrum bars should fill the available panel width rather than staying narrow with large gaps.
+- DATA FEED presents telemetry as an upward-scrolling p5 text list. `SYSTEM` events render full date/time; other sources render time only.
+- DATA FEED uses `TextListBox` autoscroll. User wheel/scrollbar interaction pins the view to history; returning to the bottom resumes autoscroll.
+- Telemetry metrics should be exposed as data methods such as `getTelemetry()` on analyzer modules, then sampled/formatted centrally from `sketch.js` to avoid coupling visualizers to log text.
 - Long-running playback should dispose replaced `p5.SoundFile` objects and recreated `p5.Reverb` instances; stopping/disconnecting alone can leave p5.sound objects and Web Audio buffers around after several tracks.
 - Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, and `SUBMARINE`.
 - `SUBMARINE` is the default theme through `DEFAULT_THEME_NAME` in `lib/theme.js`; saved user themes still override it.

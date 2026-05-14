@@ -22,6 +22,7 @@ The interface is arranged like a modular deck:
 - `SPECTRUM` and `WAVEFORM` visualize the current audio signal.
 - `VU METERS` shows the stereo output level after volume, balance, EQ, and reverb changes.
 - `PHASE` shows stereo width and correlation through a vectorscope connected to the output bus.
+- `DATA FEED` shows a live telemetry log with system, transport, stream, FX, EQ, spectrum, VU, and phase entries.
 - `POSITION` tracks playback progress.
 - `LEVEL` controls volume, balance, and playback rate.
 - `FX BUS` exposes bass, mid, treble, reverb, and reverb mix.
@@ -121,6 +122,9 @@ lib/
   player.js        stream loading, playback, queue progression
   playercontrol.js transport button DOM controls
   userappcontrol.js theme, fullscreen, and logout controls
+  telemetrylog.js  shared DATA FEED event buffer, timestamps, throttle, dedupe
+  telemetrypanel.js DATA FEED p5 renderer
+  textlistbox.js   reusable p5 fixed-row text/list box
   playlist.js      queue rendering and click-to-play behavior
   filebrowser.js   library browsing
   playinginfo.js   cover art and metadata panel

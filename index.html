@@ -35,22 +35,6 @@
 
     <!--<link rel="stylesheet" type="text/css" href="style.css">-->
   <style>
-          :root {
-            --bg: #070a12;
-            --panel: rgba(13, 18, 31, 0.92);
-            --panel-soft: rgba(18, 26, 43, 0.88);
-            --line: rgba(0, 229, 255, 0.36);
-            --cyan: #00e5ff;
-            --pink: #ff2bd6;
-            --amber: #f6c85f;
-            --text: #edf7ff;
-            --muted: #8fa7b8;
-            --field: #101827;
-            --line-soft: rgba(0, 229, 255, 0.16);
-            --pink-soft: rgba(255, 43, 214, 0.11);
-            --shell-shadow: 0 22px 70px rgba(0,0,0,0.52), 0 0 34px rgba(0,229,255,0.12);
-          }
-
           * { box-sizing: border-box; }
 
           html,
@@ -109,7 +93,7 @@
             flex: 0 0 500px;
             min-height: 868px;
             padding: 28px;
-            border: 1px solid rgba(255, 43, 214, 0.24);
+            border: 1px solid var(--pink-soft);
             background: linear-gradient(180deg, var(--panel), var(--panel-soft));
             box-shadow: 0 22px 70px rgba(0,0,0,0.42), inset 0 1px rgba(255,255,255,0.05);
           }
@@ -121,7 +105,7 @@
             font-weight: 700;
             letter-spacing: 0;
             text-transform: uppercase;
-            border-bottom: 1px solid rgba(0,229,255,0.22);
+            border-bottom: 1px solid var(--line);
             padding-bottom: 12px;
             margin-bottom: 16px;
           }
@@ -147,11 +131,11 @@
           select {
             color: var(--text);
             background: var(--field);
-            border: 1px solid rgba(0,229,255,0.48);
+            border: 1px solid var(--line);
             border-radius: 4px;
             outline: none;
             padding: 2px 8px;
-            box-shadow: 0 0 16px rgba(0,229,255,0.08);
+            box-shadow: 0 0 16px var(--line-soft);
           }
 
           @media (max-width: 1240px) {

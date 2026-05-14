@@ -22,6 +22,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - `lib/audioeffects.js` owns p5.sound routing and audio effects: volume, balance, rate, EQ, reverb, and output analysis routing.
 - `lib/subsonic.js` owns Subsonic REST calls and authenticated URL generation.
 - `lib/theme.js` owns all theme-specific values, including colors, optional `panelFrame`, CSS shell shadow, and transport PNG filters.
+- `index.html` must not define theme color values; it should only consume CSS variables that `lib/theme.js` applies on load.
 - `lib/textlistbox.js` is a reusable p5 fixed-row text/list primitive for future text panels, command-style tools, and logs.
 - `lib/telemetrylog.js` owns the shared DATA FEED event buffer, timestamps, throttling, and dedupe.
 - `lib/telemetrypanel.js` renders the DATA FEED panel through `TextListBox`.

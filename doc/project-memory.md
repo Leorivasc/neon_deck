@@ -39,7 +39,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - The canvas now uses the visible viewport size and avoids page scroll; panel defaults may still need tablet-specific refinement.
 - Desktop and tablet are the current responsive targets. A 10-inch tablet works well with viewport sizing, no page scroll, `Skinny` ON, and filters OFF.
 - Smartphone support is deferred and should likely be a separate view-based interface rather than a compressed full deck.
-- Default control coordinates were last synchronized from `getFullLayout()`, not just `getPanelLayout()`.
+- Default panel/control coordinates were last synchronized from the supplied `getFullLayout()` dump that includes DATA FEED and USER CONTROL at the left edge.
 - Spectrum, waveform, VU meters, and progress bar are panel-bound and should fit their panel after resizing.
 - PHASE is panel-bound and resizable; keep its default position away from the bottom edge so it has room to grow.
 - The canvas shell border needs 2px of reserved size in `resizeCanvasToAvailableSpace()` so the right border remains visible.

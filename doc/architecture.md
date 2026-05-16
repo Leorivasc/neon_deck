@@ -131,7 +131,9 @@ When filters are enabled, the loaded song is disconnected from the master output
 
 Scrollable canvas list surfaces also consume wheel input while hovered. `BROWSER`, `QUEUE`, and `DATA FEED` use the wheel for row/history navigation before the event can reach the browser page.
 
-`BROWSER` keeps normal click as the play-now action. Shift+Click on a song, or clicking songs while the browser `+` toolbar mode is active, appends tracks to `QUEUE` without stopping the current playback.
+`BROWSER` keeps normal click as the play-now/navigation action. Folder rows are prefixed with `🗀`, song rows are prefixed with `♪`, and Shift+Click or the browser `+` toolbar mode appends songs to `QUEUE` without stopping the current playback. When the target is a folder, `FileBrowser` recursively reads Subsonic directory children with `getMusicDirectory()` and appends every song it finds.
+
+`QUEUE` keeps normal click as the play-from-here action. The queue toolbar `X` clears the full queue, Shift+Click removes the clicked queued item, and toolbar `-` mode makes row clicks remove queued items without interrupting the active audio buffer.
 
 ## UI Model
 

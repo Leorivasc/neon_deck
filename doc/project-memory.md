@@ -65,6 +65,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - DATA FEED presents telemetry as an upward-scrolling p5 text list. `SYSTEM` events render full date/time; other sources render time only.
 - DATA FEED uses `TextListBox` autoscroll. User wheel/scrollbar interaction pins the view to history; returning to the bottom resumes autoscroll.
 - Telemetry metrics should be exposed as data methods such as `getTelemetry()` on analyzer modules, then sampled/formatted centrally from `sketch.js` to avoid coupling visualizers to log text.
+- Balance and Speed sliders emit explicit DATA FEED entries (`Balance :: ...` and `Speed :: ...`) instead of being hidden inside the volume snapshot. Slider release emits immediately; wheel changes use a short throttle so they feel responsive without flooding DATA FEED.
 - Long-running playback disposes replaced `p5.SoundFile` objects before loading the next decoded buffer and clears audio routing while the new track is loading. Recreated `p5.Reverb` instances are disposed during routing rebuilds.
 - Long-running in-memory histories must stay bounded: `TelemetryLog` caps entries and throttle/dedupe keys, `PlayList` caps random-play history, and `PlayingInfo` keeps only a small cover-art cache.
 - Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO`.

@@ -62,7 +62,8 @@ This file captures the working memory for future sessions. Keep it short, factua
 - DATA FEED presents telemetry as an upward-scrolling p5 text list. `SYSTEM` events render full date/time; other sources render time only.
 - DATA FEED uses `TextListBox` autoscroll. User wheel/scrollbar interaction pins the view to history; returning to the bottom resumes autoscroll.
 - Telemetry metrics should be exposed as data methods such as `getTelemetry()` on analyzer modules, then sampled/formatted centrally from `sketch.js` to avoid coupling visualizers to log text.
-- Long-running playback should dispose replaced `p5.SoundFile` objects and recreated `p5.Reverb` instances; stopping/disconnecting alone can leave p5.sound objects and Web Audio buffers around after several tracks.
+- Long-running playback disposes replaced `p5.SoundFile` objects before loading the next decoded buffer and clears audio routing while the new track is loading. Recreated `p5.Reverb` instances are disposed during routing rebuilds.
+- Long-running in-memory histories must stay bounded: `TelemetryLog` caps entries and throttle/dedupe keys, `PlayList` caps random-play history, and `PlayingInfo` keeps only a small cover-art cache.
 - Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO`.
 - `SUBMARINE` is the default theme through `DEFAULT_THEME_NAME` in `lib/theme.js`; saved user themes still override it.
 - `SUBMARINE` uses `panelFrame` for yellow panel frames while keeping panel contents blue and component/signal colors green.

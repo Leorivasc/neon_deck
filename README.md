@@ -26,7 +26,7 @@ The interface is arranged like a modular deck:
 - `POSITION` tracks playback progress.
 - `LEVEL` controls volume, balance, and playback rate.
 - `FX BUS` exposes bass, mid, treble, reverb, and reverb mix.
-- `BROWSER` lets you explore the Subsonic library.
+- `BROWSER` lets you explore the Subsonic library. Use Shift+Click or the `+` toolbar mode to append songs to `QUEUE` without interrupting playback.
 - `QUEUE` lists upcoming tracks. Click any queued item to jump there and continue from that point.
 - `USER CONTROL` keeps the deck configurable with theme selection, `Move Panels`, `Move Elements`, `Full`, and `Logout`.
 

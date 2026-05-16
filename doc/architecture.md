@@ -131,6 +131,8 @@ When filters are enabled, the loaded song is disconnected from the master output
 
 Scrollable canvas list surfaces also consume wheel input while hovered. `BROWSER`, `QUEUE`, and `DATA FEED` use the wheel for row/history navigation before the event can reach the browser page.
 
+`BROWSER` keeps normal click as the play-now action. Shift+Click on a song, or clicking songs while the browser `+` toolbar mode is active, appends tracks to `QUEUE` without stopping the current playback.
+
 ## UI Model
 
 Most UI is drawn on the p5 canvas. Some p5-created HTML elements are positioned over the page:

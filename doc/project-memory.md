@@ -53,6 +53,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 
 - Transport buttons should prevent repeated PLAY from stacking multiple playback instances. PLAY should act only from stopped or paused state.
 - Random play belongs to `PlayList`: it changes next/previous pointer selection without reordering the visible queue. The switch lives in TRANSPORT.
+- File browser click behavior: normal song click replaces/starts playback; Shift+Click or browser `+` add mode appends songs to QUEUE without interrupting playback.
 - Visualizers expose `setInactive()` / `isInactive()`. When inactive, their `draw()` returns immediately; `VectorScope` also disconnects its analyser nodes.
 - The `Skinny` switch lives in TRANSPORT. ON stores `skinnyMode: true`, hides/inactivates SPECTRUM, WAVEFORM, VU METERS, and PHASE, and skips their draw calls for low-power devices.
 - `##SKINNY MODE` comments mark the code paths that own low-power behavior: switch state, draw skipping, module-level inactive handling, analyzer disconnection, and LayoutManager panel filtering.

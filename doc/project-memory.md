@@ -44,7 +44,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - Desktop and tablet are the current responsive targets. A 10-inch tablet works well with viewport sizing, no page scroll, `Skinny` ON, and filters OFF.
 - Smartphone support is deferred and should likely be a separate view-based interface rather than a compressed full deck.
 - Default panel/control coordinates were last synchronized from the supplied `getFullLayout()` dump that includes DATA FEED and USER CONTROL at the left edge.
-- Spectrum, waveform, VU meters, POSITION/progress bar, PHASE, and DATA FEED are panel-bound and should fit their panel after resizing.
+- Spectrum, waveform, VU meters, POSITION/progress bar, PHASE, BROWSER, QUEUE, and DATA FEED are panel-bound and should fit their panel after resizing.
 - PHASE is panel-bound and resizable; keep its default position away from the bottom edge so it has room to grow.
 - BROWSER, QUEUE, and DATA FEED consume mouse wheel input while hovered; sliders keep their own wheel behavior while hovered.
 - The canvas shell border needs 2px of reserved size in `resizeCanvasToAvailableSpace()` so the right border remains visible.

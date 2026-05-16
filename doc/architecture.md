@@ -129,7 +129,7 @@ When filters are enabled, the loaded song is disconnected from the master output
 - Click anywhere on the slider track to jump to that value.
 - Use the mouse wheel while hovering over the slider.
 
-Scrollable canvas list surfaces also consume wheel input while hovered. `BROWSER`, `QUEUE`, and `DATA FEED` use the wheel for row/history navigation before the event can reach the browser page.
+Scrollable canvas list surfaces also consume wheel input while hovered. `BROWSER`, `QUEUE`, and `DATA FEED` use the wheel for row/history navigation before the event can reach the browser page. `BROWSER` and `QUEUE` are panel-bound components: moving or resizing their panels refits the list viewport, toolbar, scrollbar, and scroll offset.
 
 `BROWSER` keeps normal click as the play-now/navigation action. Folder rows are prefixed with `🗀`, song rows are prefixed with `♪`, and Shift+Click or the browser `+` toolbar mode appends songs to `QUEUE` without stopping the current playback. When the target is a folder, `FileBrowser` recursively reads Subsonic directory children with `getMusicDirectory()` and appends every song it finds.
 

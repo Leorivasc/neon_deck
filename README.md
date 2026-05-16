@@ -92,7 +92,7 @@ Turn `Move Panels` on in `USER CONTROL` to move or resize panels. Dragging a pan
 
 Turn `Move Elements` on when you want to move individual controls between panels. Turning both switches off saves the current arrangement and ownership data in browser storage. The next reload restores it automatically.
 
-Panel-bound modules such as `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, `POSITION`, and `DATA FEED` refit their contents after resize. `BROWSER`, `QUEUE`, and `DATA FEED` also consume mouse wheel scrolling while the pointer is over them.
+Panel-bound modules such as `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, `POSITION`, `BROWSER`, `QUEUE`, and `DATA FEED` refit their contents after resize. `BROWSER`, `QUEUE`, and `DATA FEED` also consume mouse wheel scrolling while the pointer is over them.
 
 On startup, the deck waits until login validation and player initialization finish before rendering the full control surface. Saved layout coordinates are restored as-is, even when they fall outside the currently visible canvas after switching between fullscreen and windowed mode.
 

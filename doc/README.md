@@ -62,8 +62,11 @@ Stored fields:
 - `skinnyMode`
 - `layout`
 - `layoutOwners`
+- `queueState`
 
 Older browser storage may still contain `visualizersEnabled`; the app treats `visualizersEnabled: false` as `skinnyMode: true` for compatibility.
+
+`queueState` stores compact queue metadata for the current server and user so reloads can restore the local `QUEUE` without autoplay. It excludes audio buffers, stream URLs, cover image pixels, and DATA FEED history.
 
 ## Skinny Mode
 

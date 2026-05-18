@@ -92,6 +92,12 @@ The PWA service worker caches only the local app shell: `index.html`, `manifest.
 
 Service workers require HTTPS or localhost. During local development, serving from `http://localhost:8001/` is enough for registration.
 
+## Queue Persistence
+
+The local `QUEUE` is saved in browser storage and restored on reload for the same Subsonic server and user. Only compact track metadata is stored: IDs, title, artist, album, cover art IDs, duration, and queue pointer. Audio buffers, stream URLs, cover images, DATA FEED contents, and runtime playback state are not persisted.
+
+Restoring a queue does not autoplay. The deck comes back with the queue and pointer ready, and playback starts only after a user action.
+
 ## Layout Mode
 
 The deck is movable because real screens are not all the same shape.

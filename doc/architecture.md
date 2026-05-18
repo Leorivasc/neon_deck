@@ -73,9 +73,17 @@ u=<user>&t=<token>&s=<salt>&v=<api-version>&c=<client>&f=json
 The password is used only at setup time and is not stored by the app.
 The generated token and salt are stored in browser `localStorage`, so they should be treated as local browser credentials. Prefer HTTPS for remote Subsonic servers and use the deck from a trusted browser profile.
 
-`Logout` removes the stored auth fields, clears saved layout data (`layout` and `layoutOwners`), and reloads the page. The next sign-in starts from the current default panel arrangement.
+`Logout` removes the stored auth fields, clears saved layout data (`layout` and `layoutOwners`), clears the saved queue (`queueState`), and reloads the page. The next sign-in starts from the current default panel arrangement.
 
 The selected theme is also stored in `subsonicPlayerConfig.theme`. It is intentionally kept when logging out.
+
+## Queue Persistence
+
+The local queue persists through `subsonicPlayerConfig.queueState`. `PlayList` owns queue serialization through `getPersistedState()` and restoration through `restorePersistedState()`, while `lib/sketch.js` owns storage writes through the existing app config helpers.
+
+Persisted queue state is versioned and tied to the current `server` and `user`, so a queue from one Subsonic account is not restored into another. The stored payload contains compact track metadata and the queue pointer only. It deliberately excludes stream URLs, tokens, p5.SoundFile objects, decoded audio buffers, cover image pixels, and DATA FEED history.
+
+Queue writes are debounced to avoid repeated `localStorage` writes during folder adds or batch mutations. A `beforeunload` flush writes the last pending snapshot before refresh. Restoring the queue never starts playback automatically.
 
 ## API Boundary
 

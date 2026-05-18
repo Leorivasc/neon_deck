@@ -1,0 +1,19 @@
+{
+  "name": "Subsonic Neon Deck",
+  "short_name": "Neon Deck",
+  "description": "A client-side Subsonic audio deck with live visualizers and telemetry.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#020812",
+  "theme_color": "#00ff58",
+  "icons": [
+    {
+      "src": "assets/icons/neon-deck.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

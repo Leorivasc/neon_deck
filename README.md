@@ -84,6 +84,14 @@ http://localhost:8001/
 
 You can also use another static server. The important part is that `index.html`, `lib/`, and `assets/` are served from the same project root.
 
+## Installable PWA
+
+Subsonic Neon Deck includes a progressive web app layer. It can still be used as a normal website, but compatible browsers can install it as a standalone app window.
+
+The PWA service worker caches only the local app shell: `index.html`, `manifest.webmanifest`, scripts in `lib/`, local control images, and the app icon. Subsonic streams, REST responses, cover art, credentials, and other authenticated server data stay network-only.
+
+Service workers require HTTPS or localhost. During local development, serving from `http://localhost:8001/` is enough for registration.
+
 ## Layout Mode
 
 The deck is movable because real screens are not all the same shape.

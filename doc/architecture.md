@@ -2,7 +2,7 @@
 
 ## High-Level Shape
 
-The application is a single-page browser app. It uses p5.js for canvas/UI lifecycle and p5.sound for audio loading, playback, effects, and FFT visualizations.
+The application is a single-page browser app. It uses p5.js for canvas/UI lifecycle and p5.sound for audio loading, playback, effects, and FFT visualizations. It also has a progressive web app layer for optional installation while keeping normal web usage unchanged.
 
 There is no module loader or bundler. `index.html` loads scripts in order, so each file contributes globals that later files can use.
 
@@ -10,7 +10,9 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 
 | File | Responsibility |
 | --- | --- |
-| `index.html` | HTML shell, script loading, and canvas mount. The old lyrics DOM is commented out until that feature returns. |
+| `index.html` | HTML shell, script loading, PWA manifest/service worker registration, and canvas mount. The old lyrics DOM is commented out until that feature returns. |
+| `manifest.webmanifest` | PWA install metadata: app name, display mode, orientation, colors, and icon references. |
+| `sw.js` | Conservative service worker that caches only the local app shell and leaves Subsonic/audio requests network-only. |
 | `lib/theme.js` | Central theme registry, active `UI` palette, CSS variable application, and theme toggle helpers. |
 | `lib/sketch.js` | Main p5 sketch, setup flow, playback, playlists, and high-level orchestration. |
 | `lib/layoutmanager.js` | Owns panel layout, layout drag/resize state, element-panel ownership, and layout serialization. |
@@ -47,6 +49,12 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 9. With accepted config present, `setup()` waits for the async credential check before creating the player UI.
 10. `initializePlayer()` creates `SubsonicClient`, sizes the canvas to the available viewport, creates controls, visualizers, playlist, file browser, applies saved layout data, and starts loading playlists/indexes.
 11. The draw loop renders the full deck only after `appReady` is true. Before that it shows a startup/status screen, which avoids half-rendered empty panels during async startup.
+
+## PWA Model
+
+The PWA layer is progressive: unsupported browsers, `file://` use, and non-secure non-localhost origins continue to run the app as a normal web page. On HTTPS or localhost, `index.html` registers `sw.js` after window load.
+
+`sw.js` uses a versioned app-shell cache. It precaches local static files and removes older cache versions on activation. Navigations try the network first and fall back to cached `index.html`; local static files use cache-first behavior. Requests outside the app origin, audio requests, and Subsonic-style paths such as `/rest/`, `/stream`, `/download`, and `/getCoverArt` are not intercepted, so authenticated media and API traffic remain controlled by the normal network flow.
 
 ## Authentication Model
 

@@ -6,7 +6,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 
 - App name: **Subsonic Neon Deck**.
 - Type: browser-only Subsonic-compatible music player.
-- Runtime: static `index.html` app with local scripts from `lib/`; no build step.
+- Runtime: static `index.html` app with local scripts from `lib/`; no build step. It has an optional PWA layer for installable use.
 - Main libraries: p5.js and p5.sound.
 - Documentation language: English.
 - Code comments: English.
@@ -23,6 +23,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - `lib/subsonic.js` owns Subsonic REST calls and authenticated URL generation.
 - `lib/theme.js` owns all theme-specific values, including colors, optional `panelFrame`, CSS shell shadow, and transport PNG filters.
 - `index.html` must not define theme color values; it should only consume CSS variables that `lib/theme.js` applies on load.
+- `manifest.webmanifest` and `sw.js` provide the PWA layer. The service worker must cache only local app-shell files and must not cache Subsonic streams, REST responses, cover art, or credentials.
 - `lib/textlistbox.js` is a reusable p5 fixed-row text/list primitive for future text panels, command-style tools, and logs.
 - `lib/telemetrylog.js` owns the shared DATA FEED event buffer, timestamps, throttling, and dedupe.
 - `lib/telemetrypanel.js` renders the DATA FEED panel through `TextListBox`.

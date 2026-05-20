@@ -123,7 +123,7 @@ Subsonic stream
   -> browser audio output
 ```
 
-Filter and reverb settings are updated only when their sliders change. That keeps the graph from being rebuilt continuously during playback, which avoids the stutter that can happen when audio nodes are stacked or reprocessed every frame.
+Filter and reverb settings are updated only when their sliders change. That keeps the graph from being rebuilt continuously during playback, which avoids the stutter that can happen when audio nodes are stacked or reprocessed every frame. When filters are off, the player uses a direct route and does not create the reverb/convolver path; pause/stop also suspends the shared p5.sound AudioContext so Firefox's GraphRunner can sleep while playback is idle.
 
 ## Project Map
 

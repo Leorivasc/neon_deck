@@ -135,6 +135,8 @@ When filters are enabled, the loaded song is disconnected from the master output
 
 `AudioEffects.configure()` rebuilds this graph only when the active song changes or the filter on/off switch changes. This avoids repeatedly stacking `p5.Reverb.process()` paths while a user moves sliders.
 
+When filters are disabled, `AudioEffects` uses a direct song -> master route and does not create `p5.Reverb`. This keeps the Firefox WebAudio graph smaller during long sessions. `Player` also suspends the shared p5.sound `AudioContext` after idle pause/stop and resumes it before playback so Firefox `GraphRunner` can sleep when the deck is not producing audio.
+
 `lib/sketch.js` reads the slider values and passes them to `AudioEffects` as plain control data. Sliders update volume, balance, rate, bass, mid, treble, reverb mix, and reverb gain. Values are applied only when they change, and gain changes use a short ramp to reduce clicks.
 
 ## Slider Interaction

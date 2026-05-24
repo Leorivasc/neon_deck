@@ -1,1 +1,4 @@
 .vscode/*
+
+# Firefox performance profiles generated during local diagnostics.
+Firefox * profile.json

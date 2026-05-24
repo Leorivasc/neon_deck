@@ -36,6 +36,62 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 | `lib/slider_h.js` | Horizontal slider control used by balance and playback speed. |
 | `lib/switch.js` | Toggle controls for filters, playlist looping, panel movement, and element movement. |
 
+### Component Overview
+
+```mermaid
+flowchart LR
+    HTML[index.html] --> P5[p5.js lifecycle]
+    HTML --> Sound[p5.sound]
+    HTML --> Theme[lib/theme.js]
+    P5 --> Sketch[lib/sketch.js]
+
+    Theme --> UI[Active UI palette]
+    UI --> Sketch
+    Sketch --> Config[localStorage config]
+    Sketch --> Client[SubsonicClient]
+    Sketch --> Browser[FileBrowser]
+    Sketch --> Queue[PlayList]
+    Sketch --> Info[PlayingInfo]
+    Sketch --> Progress[ProgressBarH]
+    Sketch --> Spectrum[Spectrum]
+    Sketch --> Waveform[WaveForm]
+    Sketch --> VUMeters[VUMeters]
+    Sketch --> VectorScope[VectorScope]
+    Sketch --> TelemetryLog[TelemetryLog]
+    Sketch --> TelemetryPanel[TelemetryPanel]
+    Sketch --> Sliders[Slider controls]
+    Sketch --> Switches[Switch controls]
+    Sketch --> PlayerControl[PlayerControl]
+    Sketch --> UserAppControl[UserAppControl]
+    Sketch --> Layout[LayoutManager]
+    Sketch --> AudioEffects[AudioEffects]
+    Sketch --> Player[Player]
+
+    Client --> Server[Subsonic REST API]
+    Browser --> Client
+    Browser --> Queue
+    Browser --> Player
+    Player --> Queue
+    Player --> Client
+    PlayerControl --> Player
+    UserAppControl --> Theme
+    AudioEffects --> Sound
+    Queue --> Sketch
+    Info --> Client
+    Spectrum --> Sound
+    Waveform --> Sound
+    VUMeters --> Sound
+    VectorScope --> Sound
+    Spectrum -. getTelemetry .-> Sketch
+    VUMeters -. getTelemetry .-> Sketch
+    VectorScope -. getTelemetry .-> Sketch
+    PlayerControl --> TelemetryLog
+    TelemetryPanel --> TelemetryLog
+    TelemetryPanel --> TextListBox
+    Layout --> Panels[Default panels]
+    Layout --> Movables[Movable UI elements]
+```
+
 ## Startup Flow
 
 1. Browser opens `index.html`.
@@ -49,6 +105,43 @@ There is no module loader or bundler. `index.html` loads scripts in order, so ea
 9. With accepted config present, `setup()` waits for the async credential check before creating the player UI.
 10. `initializePlayer()` creates `SubsonicClient`, sizes the canvas to the available viewport, creates controls, visualizers, playlist, file browser, applies saved layout data, and starts loading playlists/indexes.
 11. The draw loop renders the full deck only after `appReady` is true. Before that it shows a startup/status screen, which avoids half-rendered empty panels during async startup.
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant Sketch as lib/sketch.js
+    participant Storage as localStorage
+    participant Server as Subsonic server
+    participant User
+
+    Browser->>Sketch: p5 setup()
+    Sketch->>Storage: get subsonicPlayerConfig
+    alt Config missing or invalid
+        Sketch->>Sketch: noLoop()
+        Sketch->>User: show setup form
+        User->>Sketch: submit server, username, password
+        Sketch->>Sketch: normalize server
+        Sketch->>Sketch: create salt
+        Sketch->>Sketch: MD5(password + salt)
+        Sketch->>Server: ping with candidate token
+        alt Credentials accepted
+            Sketch->>Storage: save server, user, token, salt
+            Sketch->>Browser: reload page
+        else Credentials rejected
+            Sketch->>User: show login error
+        end
+    else Config present
+        Sketch->>Server: ping with stored token
+        alt Stored credentials accepted
+            Sketch->>Sketch: initialize player UI
+            Sketch->>Sketch: appReady = true
+            Sketch->>Browser: render full deck
+        else Stored credentials rejected
+            Sketch->>Storage: remove auth fields
+            Sketch->>User: show setup form
+        end
+    end
+```
 
 ## PWA Model
 
@@ -105,6 +198,26 @@ Higher-level methods convert nullable or singleton response fields into predicta
 
 This keeps UI code from crashing when the server is unavailable, credentials fail, or the API returns a singleton where an array is expected.
 
+```mermaid
+sequenceDiagram
+    participant UI as UI code
+    participant Client as SubsonicClient
+    participant Server as Subsonic server
+
+    UI->>Client: getPlaylists() / getIndexes() / getPlaylist()
+    Client->>Client: request(endpoint, params)
+    Client->>Client: add u, t, s, v, c, f=json
+    Client->>Server: fetch /rest/endpoint
+    Server-->>Client: JSON response
+    alt HTTP and Subsonic status OK
+        Client->>Client: normalize fields into arrays/objects
+        Client-->>UI: predictable result shape
+    else HTTP error, API error, missing field, or network failure
+        Client->>Client: console.error
+        Client-->>UI: null or empty normalized result
+    end
+```
+
 ## Playback Model
 
 The app keeps one global `song` reference for the currently loaded `p5.SoundFile`.
@@ -124,6 +237,52 @@ Clicking a visible row in the queue resolves the row with `PlayList.getItemIndex
 Random play is intentionally not a queue shuffle. It leaves the queue order intact and changes only how `next()` selects the next pointer.
 When `Loop Playlist` is off, random play stops after its current random candidate round is exhausted. When loop is on, it starts a new random round.
 
+```mermaid
+sequenceDiagram
+    participant User
+    participant Sketch as lib/sketch.js
+    participant Player
+    participant Queue as PlayList
+    participant Client as SubsonicClient
+    participant AudioEffects
+    participant P5 as p5.sound
+
+    User->>Sketch: select song or press play
+    Sketch->>Player: playSongById(id)
+    Player->>Queue: get/set pointer
+    Player->>Client: getSong(id)
+    Client-->>Player: stream URL
+    Player->>P5: loadSound(stream URL)
+    P5-->>Player: success callback
+    Player->>P5: song.play()
+    Sketch->>Player: getSoundObject()
+    Player-->>Sketch: newly loaded p5.SoundFile
+    Sketch->>AudioEffects: configure(song, filtersOn, true)
+    Sketch->>AudioEffects: applyControls(slider values)
+    Player->>Player: draw() watches end of song
+    Player->>Queue: next()
+    Player->>Player: playSongByPlaylistId(next)
+```
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Sketch as lib/sketch.js
+    participant Queue as PlayList
+    participant Player
+
+    User->>Sketch: click visible queue row
+    Sketch->>Queue: getItemIndexAt(mouseX, mouseY)
+    alt Row found
+        Sketch->>Player: playSongByPlaylistId(index)
+        Player->>Queue: setPointer(index)
+        Player->>Player: playSongById(song.id)
+        Player->>Player: continue via playNext() on song end
+    else Click outside row or on scrollbar
+        Sketch->>Queue: handleMouse(mouseX, mouseY)
+    end
+```
+
 ## Audio Graph
 
 When filters are enabled, the loaded song is disconnected from the master output and connected into three band-pass paths:
@@ -137,7 +296,53 @@ When filters are enabled, the loaded song is disconnected from the master output
 
 When filters are disabled, `AudioEffects` uses a direct song -> master route and does not create `p5.Reverb`. This keeps the Firefox WebAudio graph smaller during long sessions. `Player` also suspends the shared p5.sound `AudioContext` after idle pause/stop and resumes it before playback so Firefox `GraphRunner` can sleep when the deck is not producing audio.
 
+Long Firefox playback sessions use a periodic maintenance path in `Player.performMaintenance()`. After every 50 completed playbacks, `Player` inserts a short maintenance gap before loading the next stream. During that gap it detaches and disposes the ended `p5.SoundFile`, clears p5.sound internals, briefly suspends the shared `AudioContext`, and emits a `SYSTEM` DATA FEED entry. `lib/sketch.js` handles the maintenance callback by rebuilding app-owned audio helpers such as `AudioEffects` and visualizer audio nodes.
+
+`VU METERS` is included in this maintenance path because its implementation differs from the other visualizers: it uses `p5.Amplitude`, which creates an AudioWorklet connected to `p5.soundOut.meter`. `VUMeters.recycleAudioNodes()` replaces that meter worklet without recreating the visible panel. Spectrum, waveform, and vector scope are mostly analyzer/readout panels and are therefore only recycled if they later expose the same maintenance hook.
+
 `lib/sketch.js` reads the slider values and passes them to `AudioEffects` as plain control data. Sliders update volume, balance, rate, bass, mid, treble, reverb mix, and reverb gain. Values are applied only when they change, and gain changes use a short ramp to reduce clicks.
+
+```mermaid
+flowchart TD
+    NewSong{Song changed?} -->|Yes| Route[AudioEffects.configure]
+    FilterSwitch{Filter switch changed?} -->|Yes| Route
+    NewSong -->|No| NoRoute[Keep current graph]
+    FilterSwitch -->|No| NoRoute
+
+    Route --> Disconnect[Disconnect old nodes]
+    Disconnect --> Filters{Filters on?}
+
+    Filters -->|Yes| FilterStart[Build filter graph]
+    Filters -->|No| Direct[Connect song directly to master]
+
+    subgraph FXGraph[Filter graph]
+        FilterStart --> Song[p5.SoundFile song]
+        Song --> BassFilter[Bass BandPass 100 Hz]
+        Song --> MidFilter[Mid BandPass 2000 Hz]
+        Song --> TrebleFilter[Treble BandPass 12000 Hz]
+
+        BassFilter --> BassGain[Bass Gain slider]
+        MidFilter --> MidGain[Mid Gain slider]
+        TrebleFilter --> TrebleGain[Treble Gain slider]
+
+        BassGain --> Master[Master output]
+        MidGain --> Master
+        TrebleGain --> Master
+
+        Song --> Reverb[p5.Reverb created only when filters are on]
+        Reverb --> Master
+    end
+
+    Direct --> DirectMaster[Master output]
+
+    Volume[Volume slider] -. changed values .-> Song
+    Pan[Balance slider] -. changed values .-> Song
+    Rate[Speed slider] -. changed values .-> Song
+    ReverbMix[Reverb mix slider] -. changed values .-> Reverb
+    ReverbVol[Reverb volume slider] -. changed values .-> Reverb
+    Master --> VUMeters[VUMeters output analyzer]
+    DirectMaster --> VUMeters
+```
 
 ## Slider Interaction
 
@@ -152,6 +357,44 @@ Scrollable canvas list surfaces also consume wheel input while hovered. `BROWSER
 `BROWSER` keeps normal click as the play-now/navigation action. Folder rows are prefixed with `🗀`, song rows are prefixed with `♪`, and Shift+Click or the browser `+` toolbar mode appends songs to `QUEUE` without stopping the current playback. When the target is a folder, `FileBrowser` recursively reads Subsonic directory children with `getMusicDirectory()` and appends every song it finds.
 
 `QUEUE` keeps normal click as the play-from-here action. The queue toolbar `X` clears the full queue, Shift+Click removes the clicked queued item, and toolbar `-` mode makes row clicks remove queued items without interrupting the active audio buffer.
+
+```mermaid
+flowchart TD
+    Start[FileBrowser created] --> LoadIndexes[getIndexes]
+    LoadIndexes --> Root[Show ABC/root index]
+    Root --> ClickRoot{User clicks item}
+
+    ClickRoot -->|Folder/index| Artists[Show artist list]
+    ClickRoot -->|Song with id| RootSong[Player.playSongById]
+
+    Artists --> ClickArtist{User clicks artist/folder/song}
+    ClickArtist -->|Folder with id| Directory[getMusicDirectory]
+    Directory --> Items[Show child folders and songs]
+    Items --> ClickChild{User clicks child}
+    ClickChild -->|Folder with id| Directory
+    ClickChild -->|Song with id| Play[Player.playSongById]
+    ClickChild -->|Shift+Click or + mode| AddQueue[Append song or full folder to QUEUE]
+
+    Artists --> Back[Back button]
+    Items --> Back
+    Back --> Previous[Reload previous level]
+```
+
+```mermaid
+flowchart TD
+    Pointer[Pointer event] --> Over{Pointer over slider track?}
+    Over -->|No| Ignore[Ignore]
+    Over -->|Yes| Jump[Set value from click position]
+    Jump --> Drag[Set isDragging true]
+    Drag --> Move{Pointer moves?}
+    Move -->|Yes| Update[Update value from pointer]
+    Move -->|No| Hold[Keep current value]
+    Update --> Release[Pointer released]
+    Hold --> Release
+    Release --> Stop[Set isDragging false]
+
+    Wheel[Mouse wheel while hovering] --> WheelUpdate[Increment value by wheel step]
+```
 
 ## UI Model
 
@@ -185,6 +428,29 @@ Continuous analyzer values are not pushed directly from `draw()` methods. Instea
 
 When the user scrolls or drags the DATA FEED scrollbar upward, `TextListBox` pins the view to history and stops forcing autoscroll. Returning to the bottom resumes normal bottom-stick behavior as new entries arrive.
 
+```mermaid
+flowchart TD
+    SystemEvents[System/UI events] --> Emit[TelemetryLog.emit]
+    Transport[PlayerControl transport actions] --> Emit
+    Stream[Song load and metadata events] --> Emit
+    Queue[Queue and playlist events] --> Emit
+    FX[FX/EQ control snapshots] --> Emit
+
+    Spectrum[Spectrum.getTelemetry] --> Sampler[sketch.js telemetry sampler]
+    VUMeters[VUMeters.getTelemetry] --> Sampler
+    VectorScope[VectorScope.getTelemetry] --> Sampler
+    Sampler --> Emit
+
+    Emit --> Buffer[TelemetryLog entries]
+    Buffer --> Panel[TelemetryPanel]
+    Panel --> TextBox[TextListBox]
+    TextBox --> Canvas[DATA FEED panel]
+
+    Wheel[Mouse wheel / scrollbar drag] --> TextBox
+    TextBox --> Pin[Pin to history while user reviews older lines]
+    Pin --> Bottom[Return to bottom resumes autoscroll]
+```
+
 ## Layout Model
 
 The canvas layout is split between panels and movable elements:
@@ -214,27 +480,67 @@ Dragging a panel moves the panel and any element currently owned by that panel. 
 
 Panel headers are prioritized over controls inside the panel during layout editing. This matters for compact panels such as `POSITION`, where the progress bar can overlap much of the panel body; grabbing the header still selects the panel itself.
 
+```mermaid
+flowchart TD
+    Draw[draw loop] --> EditState{Move Panels or Move Elements enabled?}
+    EditState -->|No| Normal[Normal controls are interactive]
+    EditState -->|Yes| Edit[Layout edit mode]
+
+    Edit --> Overlay[Draw highlighted movable bounds]
+    Edit --> DomPass[Disable pointer events on DOM controls]
+    Edit --> Press{Pointer pressed on movable target?}
+    Press -->|No| Ignore[Ignore layout drag]
+    Press --> Resize{Resizable panel corner and Move Panels on?}
+    Resize -->|Yes| ResizePanel[Resize panel and call fitToPanel]
+    ResizePanel --> Release
+    Resize -->|No| Target{Panel or element?}
+    Target -->|Panel with Move Panels on| Children[Capture elements owned by panel]
+    Target -->|Element with Move Elements on| Capture[Store item and pointer offset]
+    Target -->|Unavailable mode| Ignore
+    Capture --> Drag[Move item with constrained x/y]
+    Children --> DragGroup[Move panel and owned children by same delta]
+    DragGroup --> Release
+    Drag --> Release
+    Release --> Owner[Update owner when an element is dropped into a panel]
+    Owner --> Log[console.log moved item and full layout JSON]
+    Edit --> Relock{Both edit switches disabled?}
+    Relock -->|Yes| Save[Save layout and layoutOwners]
+    Relock -->|No| Edit
+
+    Normal --> DomNormal[DOM controls receive pointer events]
+    Normal --> Playback[Playback, selects, sliders, switches work normally]
+```
+
 The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, and `POSITION` panels expose a resize grip in their bottom-right corner while `Move Panels` is active. Dragging that corner resizes the panel and calls the matching component's `fitToPanel()` method so the plot or progress bar fills the available panel space. Minimum sizes live in the corresponding component modules instead of being hard-coded in `lib/sketch.js`.
 
 `DATA FEED` is also panel-bound and resizable. Its minimum size and inner text-box fitting live in `TelemetryPanel`; the generic row/scroll behavior lives in `TextListBox`.
 
 Visualizers can be marked inactive by their modules. `LayoutManager` asks the panel-bound component for `isInactive()` and omits inactive panels from drawing, resize handles, and panel dragging, while still keeping their saved/default layout data available.
 
-### Skinny Mode
-
-`Skinny` lives in the `TRANSPORT` panel and persists as `subsonicPlayerConfig.skinnyMode`. It is a low-power mode for tablets and slower devices where the audio path can stutter when both filters and analyzer-backed drawings are active.
-
-When `Skinny` is ON:
-
-- `SPECTRUM` is hidden, skipped by the main draw loop, and its `p5.FFT` analyzer is disconnected from `p5.soundOut.fftMeter`.
-- `WAVEFORM` is hidden, skipped by the main draw loop, and its `p5.FFT` analyzer is disconnected from `p5.soundOut.fftMeter`.
-- `VU METERS` is hidden, skipped by the main draw loop, and its `p5.Amplitude` worklet is disconnected from `p5.soundOut.meter`.
-- `PHASE`/`VectorScope` is hidden, skipped by the main draw loop, and its Web Audio analyser tap is disconnected from `p5.soundOut.input`.
-- `LayoutManager` omits those inactive panels from drawing, resize handles, panel dragging, and panel-bound hitboxes.
-
-When `Skinny` is OFF, those modules reconnect their analyzers and return to their normal draw path. Skinny mode does not disable playback, transport controls, source controls, queue/browser drawing, progress, layout switches, theme controls, or audio filters; filters remain controlled by the separate `Filters` switch.
-
 When an element is released, `LayoutManager` logs its new position and the full layout JSON to the browser console.
+
+```mermaid
+flowchart LR
+    PanelLayout[LayoutManager.getDefaultPanels] --> DrawPanels[drawPanel]
+    PanelLayout --> LayoutTools[USER CONTROL panel]
+    LayoutTools --> ThemeToggle[Theme toggle]
+    LayoutTools --> MovePanels[Move Panels switch]
+    LayoutTools --> MoveElements[Move Elements switch]
+    LayoutTools --> Fullscreen[Full button]
+    LayoutTools --> Logout[Logout button]
+    Movables[getMovableLayoutItems] --> Drag[Drag handlers]
+    Drag --> Apply[moveTo callbacks]
+    Apply --> P5Items[p5-drawn items]
+    Apply --> DomItems[p5-created DOM items]
+    Apply --> Panels[panel rectangles]
+
+    P5Items --> Full[getFullLayout]
+    DomItems --> Full
+    Panels --> Full
+    Full --> Console[Full layout JSON]
+    Drag --> Owners[layoutItemPanelOwners]
+    Owners --> Storage[subsonicPlayerConfig.layoutOwners]
+```
 
 Saved layout entries are restored with their persisted coordinates, even when those coordinates are outside the currently visible canvas. This preserves the user's exact fullscreen layout instead of crowding panels against the windowed viewport edges.
 
@@ -251,6 +557,20 @@ setPanelLayoutEditMode(false)
 
 `getFullLayout()` reports both panels and movable controls. `getPanelLayout()` reports only the panel rectangles. A normal user does not need these APIs; they exist to tune the UI and either persist the result in browser storage or hard-code preferred coordinates back into `LayoutManager.getDefaultPanels()`.
 
+### Skinny Mode
+
+`Skinny` lives in the `TRANSPORT` panel and persists as `subsonicPlayerConfig.skinnyMode`. It is a low-power mode for tablets and slower devices where the audio path can stutter when both filters and analyzer-backed drawings are active.
+
+When `Skinny` is ON:
+
+- `SPECTRUM` is hidden, skipped by the main draw loop, and its `p5.FFT` analyzer is disconnected from `p5.soundOut.fftMeter`.
+- `WAVEFORM` is hidden, skipped by the main draw loop, and its `p5.FFT` analyzer is disconnected from `p5.soundOut.fftMeter`.
+- `VU METERS` is hidden, skipped by the main draw loop, and its `p5.Amplitude` worklet is disconnected from `p5.soundOut.meter`.
+- `PHASE`/`VectorScope` is hidden, skipped by the main draw loop, and its Web Audio analyser tap is disconnected from `p5.soundOut.input`.
+- `LayoutManager` omits those inactive panels from drawing, resize handles, panel dragging, and panel-bound hitboxes.
+
+When `Skinny` is OFF, those modules reconnect their analyzers and return to their normal draw path. Skinny mode does not disable playback, transport controls, source controls, queue/browser drawing, progress, layout switches, theme controls, or audio filters; filters remain controlled by the separate `Filters` switch.
+
 ## Visualization Modules
 
 Audio visualizers are intentionally module-owned:
@@ -264,6 +584,142 @@ Audio visualizers are intentionally module-owned:
 Analyzer modules may expose `getTelemetry()` for the central telemetry sampler. These methods return structured values rather than formatted strings, keeping log presentation out of visualizer modules.
 
 `lib/sketch.js` acts as the orchestrator: it creates the modules, asks them to draw, and calls `fitToPanel()` when their panel changes. Component-specific geometry rules stay in each module so the main sketch remains focused on lifecycle, input routing, and audio graph coordination.
+
+## Data Relationships
+
+```mermaid
+classDiagram
+    class SubsonicClient {
+        server
+        user
+        token
+        salt
+        request(endpoint, params)
+        getIndexes()
+        getMusicDirectory(id)
+        getPlaylists()
+        getPlaylist(id)
+        getSong(id)
+        getSongInfo(id)
+        getCoverArt(id)
+    }
+
+    class FileBrowser {
+        items
+        folderHistory
+        loadIndexes()
+        loadMusicDirectory(id)
+        navigateBack()
+        handleMouse(mx, my)
+        draw()
+    }
+
+    class Player {
+        song
+        keepPlaying
+        playSongById(id)
+        playSongByPlaylistId(index)
+        playSong()
+        pauseSong()
+        stopSong()
+        playNext()
+        performMaintenance()
+        getSoundObject()
+        draw()
+    }
+
+    class PlayList {
+        songslist
+        pointer
+        addSong(song)
+        addSongsList(songs)
+        next()
+        previous()
+        getCurrent()
+        clear()
+        draw()
+    }
+
+    class PlayingInfo {
+        title
+        album
+        artist
+        coverid
+        setSong(song)
+        draw()
+    }
+
+    class Spectrum {
+        draw()
+        fitToPanel(panel)
+        getMinPanelSize()
+        getTelemetry()
+    }
+
+    class WaveForm {
+        draw()
+        fitToPanel(panel)
+        getMinPanelSize()
+    }
+
+    class VUMeters {
+        draw(song)
+        recycleAudioNodes()
+        fitToPanel(panel)
+        getMinPanelSize()
+        getTelemetry()
+    }
+
+    class VectorScope {
+        draw()
+        fitToPanel(panel)
+        getMinPanelSize()
+        getTelemetry()
+    }
+
+    class TelemetryLog {
+        emit(source, message, options)
+        getEntries()
+        clear()
+    }
+
+    class TelemetryPanel {
+        draw()
+        fitToPanel(panel)
+        handleWheel(delta)
+    }
+
+    class TextListBox {
+        setItems(items)
+        draw()
+        handleWheel(delta)
+        handleMouseDrag(mx, my)
+    }
+
+    class Sketch {
+        sampleTelemetry()
+        configureAudioRouting()
+        recycleAudioRuntime()
+    }
+
+    FileBrowser --> SubsonicClient
+    FileBrowser --> PlayList
+    FileBrowser --> Player
+    Player --> SubsonicClient
+    Player --> PlayList
+    PlayingInfo --> SubsonicClient
+    PlayList --> song_objects
+    Spectrum --> P5Sound
+    WaveForm --> P5Sound
+    VUMeters --> P5Sound
+    VectorScope --> P5Sound
+    TelemetryPanel --> TelemetryLog
+    TelemetryPanel --> TextListBox
+    Spectrum ..> Sketch
+    VUMeters ..> Sketch
+    VectorScope ..> Sketch
+    Sketch --> TelemetryLog
+```
 
 ## Error Handling Philosophy
 

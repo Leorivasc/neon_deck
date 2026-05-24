@@ -154,14 +154,13 @@ lib/
 doc/
   README.md        documentation index
   architecture.md  system architecture and inner workings
-  diagrams.md      Mermaid diagrams
 ```
 
 ## Documentation
 
 Developer documentation lives in [doc/README.md](doc/README.md).
 
-Start there for architecture notes, runtime flow, API behavior, audio routing, layout persistence, and diagrams.
+Start there for architecture notes, runtime flow, API behavior, audio routing, layout persistence, and inline Mermaid diagrams.
 
 ## Design Notes
 

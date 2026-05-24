@@ -24,6 +24,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - `lib/theme.js` owns all theme-specific values, including colors, optional `panelFrame`, CSS shell shadow, and transport PNG filters.
 - `index.html` must not define theme color values; it should only consume CSS variables that `lib/theme.js` applies on load.
 - `manifest.webmanifest` and `sw.js` provide the PWA layer. The service worker must cache only local app-shell files and must not cache Subsonic streams, REST responses, cover art, or credentials.
+- `doc/architecture.md` is the main architecture document and owns the Mermaid diagrams inline with the related explanations.
 - `lib/textlistbox.js` is a reusable p5 fixed-row text/list primitive for future text panels, command-style tools, and logs.
 - `lib/telemetrylog.js` owns the shared DATA FEED event buffer, timestamps, throttling, and dedupe.
 - `lib/telemetrypanel.js` renders the DATA FEED panel through `TextListBox`.

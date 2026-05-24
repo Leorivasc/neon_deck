@@ -5,7 +5,6 @@ This directory documents the browser player architecture, runtime flow, and the 
 ## Contents
 
 - [Architecture](architecture.md): component responsibilities, data flow, layout tools, and inner workings.
-- [Diagrams](diagrams.md): Mermaid diagrams for startup, API calls, playback, browsing, audio routing, and layout editing.
 - [Project Memory](project-memory.md): current decisions, parked features, security notes, and follow-up context for future sessions.
 
 ## Project Summary

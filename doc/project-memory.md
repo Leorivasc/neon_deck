@@ -62,6 +62,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - The `Skinny` switch lives in TRANSPORT. ON stores `skinnyMode: true`, hides/inactivates SPECTRUM, WAVEFORM, VU METERS, and PHASE, and skips their draw calls for low-power devices.
 - `##SKINNY MODE` comments mark the code paths that own low-power behavior: switch state, draw skipping, module-level inactive handling, analyzer disconnection, and LayoutManager panel filtering.
 - VU meters should analyze the final output signal, after EQ, reverb, volume, and balance.
+- VU meters differ from the other visualizers because they use `p5.Amplitude`, which creates an AudioWorklet connected to p5.sound's output meter. Spectrum, waveform, and vector scope are treated more like analyzer/readout panels. This is why `VUMeters.recycleAudioNodes()` is part of the periodic Firefox GraphRunner maintenance patch.
 - Vector scope should tap `p5.soundOut.input` so the PHASE panel reflects the final stereo output bus without rerouting audio.
 - Spectrum bars should fill the available panel width rather than staying narrow with large gaps.
 - DATA FEED presents telemetry as an upward-scrolling p5 text list. `SYSTEM` events render full date/time; other sources render time only.
@@ -71,8 +72,9 @@ This file captures the working memory for future sessions. Keep it short, factua
 - Long-running playback disposes replaced `p5.SoundFile` objects before loading the next decoded buffer and clears audio routing while the new track is loading. Recreated `p5.Reverb` instances are disposed during routing rebuilds.
 - Firefox can retain large decoded `AudioBuffer` allocations if old `p5.SoundFile` objects keep internal buffer/source references after `dispose()`. `Player.releaseSoundFileReferences()` aggressively nulls discarded buffers, source nodes, AudioWorklet tracking nodes, callbacks, and cues after each track handoff.
 - Firefox `GraphRunner` can keep burning CPU while playback is paused/stopped if the shared p5.sound `AudioContext` remains running. `Player.suspendAudioContextWhenIdle()` now suspends it after idle pause/stop, and `resumeAudioContextForPlayback()` wakes it before playback. `AudioEffects` also creates `p5.Reverb` lazily only when filters are enabled.
+- `Player.performMaintenance()` runs after every 50 completed playbacks before loading the next track. It inserts a 1s maintenance gap, detaches/disposes the ended `p5.SoundFile`, briefly suspends the shared AudioContext, logs a `SYSTEM` DATA FEED event, rebuilds `AudioEffects`, and asks VU meters to replace their `p5.Amplitude` worklet. Code comments use `PERF PATCH [audio-runtime-periodic-maintenance]`.
 - Repeated rapid seeks through POSITION can create temporary Firefox/WebAudio memory pressure because p5.sound `jump()` stops/plays and creates fresh source/counter buffers. It usually releases after idle time, but future hardening should rate-limit/debounce seek requests in a centralized player method.
-- `window.getRuntimeDiagnostics()` reports soundArray length, queue length, telemetry size, cover cache size, current decoded buffer MB, audio context state, filters, and Skinny mode for long-session memory checks.
+- `window.getRuntimeDiagnostics()` reports soundArray length, queue length, telemetry size, cover cache size, current decoded buffer MB, audio context state, maintenance counters, filters, and Skinny mode for long-session memory checks.
 - Long-running in-memory histories must stay bounded: `TelemetryLog` caps entries and throttle/dedupe keys, `PlayList` caps random-play history, and `PlayingInfo` keeps only a small cover-art cache.
 - Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO`.
 - `SUBMARINE` is the default theme through `DEFAULT_THEME_NAME` in `lib/theme.js`; saved user themes still override it.
@@ -128,4 +130,5 @@ sepia(100%) saturate(2800%) hue-rotate(2deg) brightness(220%) contrast(110%)
 
 - Panel abstraction can wait until panels become more dynamic. For now, `LayoutManager` plus module-owned layout metadata is enough.
 - `FileBrowser` still mixes browsing, playlist mutation, and playback orchestration. It may be worth extracting later, but it is not urgent.
+- A possible future upgrade is an audio wrapper/interface that mimics only the p5.sound methods the app actually uses. Start with a `P5AudioTrack`/`P5AudioEngine` adapter around current p5.sound behavior, then later swap the implementation for native Web Audio without rewriting the deck UI. This is not urgent while current performance is acceptable for normal sessions.
 - Review old or legacy helper functions periodically and remove only when usage is clearly absent.

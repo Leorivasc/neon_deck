@@ -1,4 +1,4 @@
-const CACHE_NAME = "subsonic-neon-deck-v2";
+const CACHE_NAME = "subsonic-neon-deck-v3";
 
 // PWA app shell only. Subsonic streams and authenticated REST responses are
 // intentionally excluded so credentials, audio, and library data stay network

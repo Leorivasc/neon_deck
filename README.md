@@ -18,7 +18,7 @@ The interface is arranged like a modular deck:
 
 - `NOW PLAYING` shows the active song, artist, album, and cover art.
 - `SOURCE` selects playlists and songs.
-- `TRANSPORT` handles previous, play, pause, stop, next, loop, random play, visualizer visibility, and filter activation.
+- `TRANSPORT` handles previous, play, pause, stop, next, loop, random play, Skinny low-power mode, and filter activation.
 - `SPECTRUM` and `WAVEFORM` visualize the current audio signal.
 - `VU METERS` shows the stereo output level after volume, balance, EQ, and reverb changes.
 - `PHASE` shows stereo width and correlation through a vectorscope connected to the output bus.
@@ -54,9 +54,10 @@ The password is used only to generate the Subsonic token and salt. The browser s
 - `salt`
 - selected theme
 - random play state
-- visualizer visibility
+- Skinny low-power mode
 - layout preferences
 - layout ownership
+- local queue metadata
 
 All of that lives under the `localStorage` key:
 
@@ -125,10 +126,22 @@ Subsonic stream
 
 Filter and reverb settings are updated only when their sliders change. That keeps the graph from being rebuilt continuously during playback, which avoids the stutter that can happen when audio nodes are stacked or reprocessed every frame. When filters are off, the player uses a direct route and does not create the reverb/convolver path; pause/stop also suspends the shared p5.sound AudioContext so Firefox's GraphRunner can sleep while playback is idle.
 
+Long Firefox sessions also use a periodic audio-runtime maintenance pass after every 50 completed tracks. The player inserts a short gap, disposes the completed `p5.SoundFile`, briefly suspends the shared AudioContext, rebuilds app-owned audio helpers, recycles the VU meter worklet, and reports the cycle in `DATA FEED`.
+
+For long-session checks, the browser console exposes:
+
+```js
+getRuntimeDiagnostics()
+```
+
+Firefox profile exports named like `Firefox 2026-05-23 16.07 profile.json` are ignored by `.gitignore`, so local profiling files do not enter the repo by accident.
+
 ## Project Map
 
 ```text
 index.html
+manifest.webmanifest
+sw.js
 lib/
   theme.js         central theme registry and active UI palette
   sketch.js        main p5 lifecycle, UI layout, orchestration
@@ -154,6 +167,7 @@ lib/
 doc/
   README.md        documentation index
   architecture.md  system architecture and inner workings
+  project-memory.md current decisions and future-session context
 ```
 
 ## Documentation

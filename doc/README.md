@@ -36,7 +36,7 @@ The current responsive target is desktop and tablet-sized screens. A 10-inch tab
 
 Layout editing is split into two switches. `Move Panels` lets panels move or resize; when a panel moves, the elements owned by that panel move with it. `Move Elements` lets individual controls move between panels. Turning both switches off returns the deck to normal locked use and saves the layout into the same browser storage object as the Subsonic connection config.
 
-The `USER CONTROL` panel contains the theme toggle, `Move Panels`, `Move Elements`, `Full`, and `Logout`. The theme toggle cycles through `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO`, then persists the selection in browser storage. `Full` toggles browser fullscreen mode and the canvas resizes on fullscreen changes. The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, `POSITION`, and `DATA FEED` panels can be resized from their lower-right corner while panel movement is enabled.
+The `USER CONTROL` panel contains the theme toggle, `Move Panels`, `Move Elements`, `Full`, and `Logout`. The theme toggle cycles through `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO`, then persists the selection in browser storage. `Full` toggles browser fullscreen mode and the canvas resizes on fullscreen changes. Fullscreen itself is not restored automatically after reload because browsers require a user gesture to enter fullscreen. The `SPECTRUM`, `WAVEFORM`, `VU METERS`, `PHASE`, `POSITION`, and `DATA FEED` panels can be resized from their lower-right corner while panel movement is enabled.
 
 Scrollable canvas text/list surfaces use native deck gestures: `BROWSER`, `QUEUE`, and `DATA FEED` respond to mouse wheel input while hovered, and their scrollbars remain draggable for precise review.
 
@@ -67,6 +67,10 @@ Older browser storage may still contain `visualizersEnabled`; the app treats `vi
 
 `queueState` stores compact queue metadata for the current server and user so reloads can restore the local `QUEUE` without autoplay. It excludes audio buffers, stream URLs, cover image pixels, and DATA FEED history.
 
+Runtime-only diagnostics are intentionally kept out of storage. Use `getRuntimeDiagnostics()` from the browser console for long-session checks of queue size, telemetry size, cover cache size, decoded buffer size, audio context state, maintenance counters, filters, and Skinny mode.
+
+Firefox performance profile exports named like `Firefox * profile.json` are ignored by `.gitignore` because they are local diagnostic artifacts, not project data.
+
 ## Skinny Mode
 
 `Skinny` is a low-power playback mode for tablets and slower devices. It keeps playback and controls available, but disables the analyzer-heavy visual panels.
@@ -79,6 +83,8 @@ When enabled, Skinny hides and inactivates:
 - `PHASE`
 
 Those panels are not drawn, are not editable while hidden, and their audio analyzer taps are disconnected where possible. Audio filters are separate; use the `Filters` switch to disable EQ/reverb processing.
+
+Firefox-specific audio hardening is documented in [Architecture](architecture.md): completed `p5.SoundFile` objects are aggressively released, idle pause/stop suspends the shared p5.sound AudioContext, and a periodic maintenance pass runs after every 50 completed playbacks to recycle app-owned audio helpers and the VU meter worklet.
 
 The first-run form asks for a password, but only the generated token and salt are stored.
 The generated token is checked with a Subsonic `ping` before it is saved, so rejected passwords keep the user on the setup form.

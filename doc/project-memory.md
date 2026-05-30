@@ -77,6 +77,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - Repeated rapid seeks through POSITION can create temporary Firefox/WebAudio memory pressure because p5.sound `jump()` stops/plays and creates fresh source/counter buffers. It usually releases after idle time, but future hardening should rate-limit/debounce seek requests in a centralized player method.
 - `window.getRuntimeDiagnostics()` reports soundArray length, queue length, telemetry size, cover cache size, current decoded buffer MB, audio context state, maintenance counters, filters, and Skinny mode for long-session memory checks.
 - Long-running in-memory histories must stay bounded: `TelemetryLog` caps entries and throttle/dedupe keys, `PlayList` caps random-play history, and `PlayingInfo` keeps only a small cover-art cache.
+- Firefox performance profiles are local diagnostic artifacts. `.gitignore` ignores files matching `Firefox * profile.json`.
 - Themes currently available: `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO`.
 - `SUBMARINE` is the default theme through `DEFAULT_THEME_NAME` in `lib/theme.js`; saved user themes still override it.
 - `SUBMARINE` uses `panelFrame` for yellow panel frames while keeping panel contents blue and component/signal colors green.

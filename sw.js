@@ -1,4 +1,4 @@
-const CACHE_NAME = "subsonic-neon-deck-v3";
+const CACHE_NAME = "subsonic-neon-deck-v4";
 
 // PWA app shell only. Subsonic streams and authenticated REST responses are
 // intentionally excluded so credentials, audio, and library data stay network
@@ -21,28 +21,7 @@ const APP_SHELL_URLS = [
     "./assets/icons/neon-deck.svg",
     "./lib/p5.js",
     "./lib/p5.sound.js",
-    "./lib/theme.js",
-    "./lib/subsonic.js",
-    "./lib/textlistbox.js",
-    "./lib/telemetrylog.js",
-    "./lib/telemetrypanel.js",
-    "./lib/filebrowser.js",
-    "./lib/audioeffects.js",
-    "./lib/layoutmanager.js",
-    "./lib/playercontrol.js",
-    "./lib/userappcontrol.js",
-    "./lib/sketch.js",
-    "./lib/playlist.js",
-    "./lib/progressbar.js",
-    "./lib/waveform.js",
-    "./lib/spectrum.js",
-    "./lib/vumeters.js",
-    "./lib/vectorscope.js",
-    "./lib/playinginfo.js",
-    "./lib/player.js",
-    "./lib/switch.js",
-    "./lib/slider_v.js",
-    "./lib/slider_h.js"
+    "./dist/app.bundle.min.js"
 ];
 
 self.addEventListener("install", (event) => {

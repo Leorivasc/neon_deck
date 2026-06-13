@@ -10,7 +10,7 @@ It is not a streaming service. It is your server, your music, your browser, and 
 
 Subsonic Neon Deck is a client-side Subsonic player built with p5.js and p5.sound. It connects directly to a Subsonic-compatible server, stores token authentication in browser storage, browses your library, plays streams, renders album metadata, applies effects, and gives you live audio controls with waveform, spectrum, VU meter, and vectorscope visualizers.
 
-The app has no build step. The browser loads the source files directly.
+The browser loads p5 and p5.sound directly, then loads the app bundle from `dist/app.bundle.min.js`. The readable bundle is `dist/app.bundle.js`, and both are generated from the app-owned scripts in `lib/`.
 
 ## The Player
 
@@ -85,11 +85,32 @@ http://localhost:8001/
 
 You can also use another static server. The important part is that `index.html`, `lib/`, and `assets/` are served from the same project root.
 
+## Bundle
+
+The app-owned JavaScript is bundled for browser use:
+
+```text
+dist/app.bundle.js
+dist/app.bundle.min.js
+```
+
+Rebuild both files with:
+
+```bash
+./dist/build-bundle.sh
+```
+
+The minified bundle is produced with `terser`, installed locally under `dist/.tools/`. If that local tooling directory is missing, recreate it with:
+
+```bash
+npm install --prefix dist/.tools terser
+```
+
 ## Installable PWA
 
 Subsonic Neon Deck includes a progressive web app layer. It can still be used as a normal website, but compatible browsers can install it as a standalone app window.
 
-The PWA service worker caches only the local app shell: `index.html`, `manifest.webmanifest`, scripts in `lib/`, local control images, and the app icon. Subsonic streams, REST responses, cover art, credentials, and other authenticated server data stay network-only.
+The PWA service worker caches only the local app shell. Subsonic streams, REST responses, cover art, credentials, and other authenticated server data stay network-only.
 
 Service workers require HTTPS or localhost. During local development, serving from `http://localhost:8001/` is enough for registration.
 
@@ -136,39 +157,17 @@ getRuntimeDiagnostics()
 
 Firefox profile exports named like `Firefox 2026-05-23 16.07 profile.json` are ignored by `.gitignore`, so local profiling files do not enter the repo by accident.
 
-## Project Map
+## Project Shape
 
-```text
-index.html
-manifest.webmanifest
-sw.js
-lib/
-  theme.js         central theme registry and active UI palette
-  sketch.js        main p5 lifecycle, UI layout, orchestration
-  layoutmanager.js panel layout, drag/resize, ownership, persistence model
-  audioeffects.js  audio routing, EQ, reverb, output control application
-  subsonic.js      Subsonic REST client and response normalization
-  player.js        stream loading, playback, queue progression
-  playercontrol.js transport button DOM controls
-  userappcontrol.js theme, fullscreen, and logout controls
-  telemetrylog.js  shared DATA FEED event buffer, timestamps, throttle, dedupe
-  telemetrypanel.js DATA FEED p5 renderer
-  textlistbox.js   reusable p5 fixed-row text/list box
-  playlist.js      queue rendering and click-to-play behavior
-  filebrowser.js   library browsing
-  playinginfo.js   cover art and metadata panel
-  spectrum.js      spectrum visualizer
-  waveform.js      waveform visualizer
-  vumeters.js      stereo output VU meters
-  vectorscope.js   stereo phase vectorscope
-  slider_h.js      horizontal sliders
-  slider_v.js      vertical sliders
-  switch.js        toggle switches
-doc/
-  README.md        documentation index
-  architecture.md  system architecture and inner workings
-  project-memory.md current decisions and future-session context
-```
+The runtime is a static browser app:
+
+- `index.html` is the app shell.
+- `dist/app.bundle.min.js` is the app-owned JavaScript loaded by the browser.
+- `lib/p5.js` and `lib/p5.sound.js` remain separate third-party libraries.
+- `assets/` contains local audio, icons, and app artwork.
+- `doc/` contains the detailed architecture and project memory.
+
+For the full internal file map, including every source file in `lib/`, see [doc/architecture.md](doc/architecture.md).
 
 ## Documentation
 

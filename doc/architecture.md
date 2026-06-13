@@ -38,6 +38,47 @@ There is no module loader or ES module migration. App-owned scripts still rely o
 | `lib/slider_h.js` | Horizontal slider control used by balance and playback speed. |
 | `lib/switch.js` | Toggle controls for filters, playlist looping, panel movement, and element movement. |
 
+## Project Map
+
+```text
+index.html
+manifest.webmanifest
+sw.js
+dist/
+  app.bundle.js     readable app-owned JavaScript bundle
+  app.bundle.min.js minified app-owned JavaScript bundle loaded by index.html
+  build-bundle.sh   bundle and minification helper
+  .tools/           local npm tooling prefix for terser
+lib/
+  p5.js             third-party p5 library loaded separately
+  p5.sound.js       third-party p5.sound library loaded separately
+  theme.js          central theme registry and active UI palette
+  sketch.js         main p5 lifecycle, UI layout, orchestration
+  layoutmanager.js  panel layout, drag/resize, ownership, persistence model
+  audioeffects.js   audio routing, EQ, reverb, output control application
+  subsonic.js       Subsonic REST client and response normalization
+  player.js         stream loading, playback, queue progression
+  playercontrol.js  transport button DOM controls
+  userappcontrol.js theme, fullscreen, and logout controls
+  telemetrylog.js   shared DATA FEED event buffer, timestamps, throttle, dedupe
+  telemetrypanel.js DATA FEED p5 renderer
+  textlistbox.js    reusable p5 fixed-row text/list box
+  playlist.js       queue rendering and click-to-play behavior
+  filebrowser.js    library browsing
+  playinginfo.js    cover art and metadata panel
+  spectrum.js       spectrum visualizer
+  waveform.js       waveform visualizer
+  vumeters.js       stereo output VU meters
+  vectorscope.js    stereo phase vectorscope
+  slider_h.js       horizontal sliders
+  slider_v.js       vertical sliders
+  switch.js         toggle switches
+doc/
+  README.md         documentation index
+  architecture.md   system architecture and inner workings
+  project-memory.md current decisions and future-session context
+```
+
 ### Component Overview
 
 ```mermaid

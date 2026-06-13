@@ -9,13 +9,15 @@ This directory documents the browser player architecture, runtime flow, and the 
 
 ## Project Summary
 
-Subsonic Neon Deck is a client-side Subsonic music player built with p5.js and p5.sound. It runs from `index.html`, loads local JavaScript modules from `lib/`, asks for Subsonic connection details on first run, stores token authentication data in `localStorage`, then uses the Subsonic REST API to browse music, play streams, show cover art, apply effects, and visualize audio.
+Subsonic Neon Deck is a client-side Subsonic music player built with p5.js and p5.sound. It runs from `index.html`, loads p5 and p5.sound directly, then loads the app-owned bundle from `dist/app.bundle.min.js`. On first run it asks for Subsonic connection details, stores token authentication data in `localStorage`, then uses the Subsonic REST API to browse music, play streams, show cover art, apply effects, and visualize audio.
 
-The app has no build step. The source files are loaded directly by the browser. It also includes a progressive web app layer for optional installation; the service worker caches only local app-shell files and leaves Subsonic streams, REST responses, cover art, credentials, and authenticated server data network-only. The current presentation uses a themeable canvas deck with `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO` themes. The deck also includes a `DATA FEED` telemetry log fed by system events, transport actions, stream metadata, FX/EQ state, and analyzer summaries. The former lyrics column is parked in comments until the external lyrics workflow is available again.
+The app source still has no module system or bundler migration. For browser testing, `dist/build-bundle.sh` concatenates the app-owned scripts in their existing order into `dist/app.bundle.js`, then minifies that file with `terser` into `dist/app.bundle.min.js`. The minifier is installed locally under `dist/.tools/` and can be recreated with `npm install --prefix dist/.tools terser`. The app also includes a progressive web app layer for optional installation; the service worker caches only local app-shell files and leaves Subsonic streams, REST responses, cover art, credentials, and authenticated server data network-only. The current presentation uses a themeable canvas deck with `CYBER`, `STELLAR`, `FALLOUT`, `SUBMARINE`, `MATRIX`, and `VOLCANO` themes. The deck also includes a `DATA FEED` telemetry log fed by system events, transport actions, stream metadata, FX/EQ state, and analyzer summaries. The former lyrics column is parked in comments until the external lyrics workflow is available again.
 
 ## Entry Points
 
-- `index.html`: loads p5, p5.sound, and all app modules.
+- `index.html`: loads p5, p5.sound, and `dist/app.bundle.min.js`.
+- `dist/build-bundle.sh`: concatenates app-owned scripts into `dist/app.bundle.js` and minifies with `terser` into `dist/app.bundle.min.js`.
+- `dist/.tools/`: local build tooling installation for `terser`; it is not part of the runtime app and can be regenerated with npm.
 - `manifest.webmanifest`: install metadata for browsers that support PWA installation.
 - `sw.js`: app-shell service worker; does not cache Subsonic media or API data.
 - `lib/theme.js`: central theme registry, active `UI` palette, and CSS variable application.

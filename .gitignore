@@ -4,5 +4,4 @@
 Firefox * profile.json
 
 # Local build tooling dependencies.
-dist/.tools/node_modules/
-dist/.tools/node_modules/.package-lock.json
+dist/.tools/

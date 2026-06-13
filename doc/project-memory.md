@@ -6,7 +6,9 @@ This file captures the working memory for future sessions. Keep it short, factua
 
 - App name: **Subsonic Neon Deck**.
 - Type: browser-only Subsonic-compatible music player.
-- Runtime: static `index.html` app with local scripts from `lib/`; no build step. It has an optional PWA layer for installable use.
+- Runtime: static `index.html` app. It loads `lib/p5.js`, `lib/p5.sound.js`, and the app-owned bundle `dist/app.bundle.min.js`. It has an optional PWA layer for installable use.
+- Bundle: `dist/build-bundle.sh` concatenates app-owned scripts in the original classic-script order into `dist/app.bundle.js`, then minifies with `terser` into `dist/app.bundle.min.js`.
+- Build tooling: `terser` is installed under `dist/.tools/` with npm. That directory is local tooling, not runtime app data, and can be regenerated with `npm install --prefix dist/.tools terser`.
 - Main libraries: p5.js and p5.sound.
 - Documentation language: English.
 - Code comments: English.
@@ -22,7 +24,7 @@ This file captures the working memory for future sessions. Keep it short, factua
 - `lib/audioeffects.js` owns p5.sound routing and audio effects: volume, balance, rate, EQ, reverb, and output analysis routing.
 - `lib/subsonic.js` owns Subsonic REST calls and authenticated URL generation.
 - `lib/theme.js` owns all theme-specific values, including colors, optional `panelFrame`, CSS shell shadow, and transport PNG filters.
-- `index.html` must not define theme color values; it should only consume CSS variables that `lib/theme.js` applies on load.
+- `index.html` must not define theme color values; it should only consume CSS variables that `lib/theme.js` applies on load. In the current test path it loads `dist/app.bundle.min.js` instead of each app-owned `lib/*.js` file individually.
 - `manifest.webmanifest` and `sw.js` provide the PWA layer. The service worker must cache only local app-shell files and must not cache Subsonic streams, REST responses, cover art, or credentials.
 - `doc/architecture.md` is the main architecture document and owns the Mermaid diagrams inline with the related explanations.
 - `lib/textlistbox.js` is a reusable p5 fixed-row text/list primitive for future text panels, command-style tools, and logs.
